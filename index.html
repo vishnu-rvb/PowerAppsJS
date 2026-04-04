@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PowerApps JS Demo</title>
+    <link rel="icon" href="favicon.ico" sizes="any">
+    <!-- Dependencies -->
+    <link type="text/css" rel="stylesheet" href="https://static2.sharepointonline.com/files/fabric/office-ui-fabric-core/11.0.0/css/fabric.min.css">
+    <link type="text/css" rel="stylesheet" href="https://npmcdn.com/flatpickr/dist/themes/material_orange.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr" defer></script>
+    <!-- PowerApps JS -->
+    <link type="text/css" rel="stylesheet" href="src/PowerApps.css">
+    <!-- Example -->
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 10px;
+            background-color: #4a4a4a;
+            display: flex;
+            align-items: center;
+            min-height: 100vh;
+            flex-direction: column;
+        }
+
+        .form-container {
+            padding: 10px;
+            background: white;
+            min-height: 100vh;
+        }
+
+        .footer-text {
+            text-align:center;
+            font-size: 12px;
+            color: #999;
+            background: white;
+            margin-top: 0;
+            margin-bottom: 0;
+        }
+
+        .footer-text, header, .form-container {
+            width: 100%;
+            max-width: 600px;
+        }
+    </style>
+
+</head>
+
+<body class="ms-Fabric">
+
+    <!-- Header -->
+    <header></header>
+
+    <div class="form-container">
+        <form id="myForm"></form>
+    </div>
+
+    <p class="footer-text">PowerApps JS (v0)</p>
+
+    <script type="module">
+        import { PowerApps } from "./src/PowerApps.js";
+
+        document.addEventListener("DOMContentLoaded", async () => {
+
+            const PA = new PowerApps();
+            await PA.init();
+
+            function submitForm() {
+                alert("Submit clicked");
+            }
+
+            function resetForm() {
+                location.reload();
+            }
+
+            PA.add_control('header','header',{
+                'title':'PowerApps JS Example',
+                'reset': resetForm,
+                'submit': submitForm
+            });
+
+            PA.add_control('#myForm','date',{
+                label:'Date',
+                id:'date'
+            });
+
+            PA.add_control('#myForm','dropdown',{
+                label:'Shift',
+                id:'shift',
+                options:['A','B','C']
+            });
+
+            PA.add_control('#myForm','combobox',{
+                label:'Line',
+                id:'line',
+                options:['Milling','Drilling','Lathe','Robo welder']
+            });
+
+            PA.add_control('#myForm','combobox',{
+                label:'Operator',
+                id:'operator',
+                required:false
+            });
+
+            PA.add_control('#myForm','number',{
+                label:'Output',
+                id:'output',
+                min:0
+            });
+
+        });
+    </script>
+
+</body>
+</html>

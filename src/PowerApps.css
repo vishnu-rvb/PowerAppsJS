@@ -1,0 +1,197 @@
+:root {
+    --pa-orange: #f65810;
+    --pa-label-color:#00126b;
+    --pa-label-bg: #fddecf;
+    --pa-font-color: white;
+}
+
+*{
+    box-sizing: border-box;
+}
+
+.power-app-header {
+    background-color: var(--pa-orange);
+    height: 65px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 10px;
+    color: var(--pa-font-color);
+    position: sticky;
+    top: 0;
+    z-index: 2;
+}
+
+.power-app-header h1 {
+    font-size: 1.6875rem;
+    font-weight: 500;
+    margin: 0;
+}
+
+.power-app-header button {
+    background: none;
+    border: none;
+    color: var(--pa-font-color);
+    cursor: pointer;
+    width: 65px;
+}
+
+.power-app-header button i {
+    font-size: 2.1875rem;
+    padding: 5px;
+    color: var(--pa-font-color);
+}
+
+.power-app-form-field {
+    display: flex;
+    align-items: flex-start;
+    background: transparent;
+    margin-bottom: 15px;
+    color:var(--pa-label-color);
+}
+
+.power-app-field-required {
+    font-weight: bold;
+    width: 15px;
+    text-align: center;
+    font-size: 1.3125rem;
+    padding-top: 5px;
+}
+
+.power-app-field-value {
+    flex:1;
+    display: flex;
+    flex-direction: column;
+    padding-top: 5px;
+}
+
+.power-app-field-label {
+    background-color: var(--pa-label-bg);
+    margin-bottom: 5px;
+    padding-left: 5px;
+    font-size: 1.5rem;
+}
+
+.power-app-field-input {
+    display: flex;
+    position: relative;
+    height: 45px;
+}
+
+.power-app-field-input input{
+    flex: 1;
+    padding: 5px;
+    padding-right: 50px;
+    border: 1px solid var(--pa-orange);
+    border-right: none;
+    font-size: 1.3rem;
+    width: 100%;
+}
+
+.power-app-field-input option {
+    padding: 5px;
+    cursor: pointer;
+    font-size: 1.2rem;
+}
+
+.power-app-field-input option:hover {
+    background-color: var(--pa-label-bg);
+}
+
+.power-app-field-input .combobox{
+    position: relative;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.power-app-field-input .dropdown{
+    position: relative;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.power-app-field-input .combobox input, .power-app-field-input .dropdown input{
+    cursor: pointer;
+}
+
+.power-app-field-input .list {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    overflow-y: auto;
+    background: var(--pa-font-color);
+    border: 1px solid var(--pa-orange);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    z-index: 1;
+    display: none;
+}
+
+.power-app-icon-suffix {
+    position: absolute;
+    right: 0;
+    top: 0;
+    height: 100%;
+    width: 45px;
+    min-width: 45px;
+    background-color: var(--pa-orange);
+    border: 1px solid var(--pa-orange);
+    border-left: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    pointer-events: none;
+}
+
+.power-app-icon-suffix i {
+    font-size: 1.5rem;
+    color: var(--pa-font-color);
+}
+
+.power-app-icon-suffix.calendar {
+    z-index: 0;
+}
+
+.power-app-icon-suffix.blank{
+    background-color: transparent;
+}
+
+/* Force the icon to appear using the Fluent Font Unicode */ 
+.ms-Icon--Calendar::before {
+    content: "\E787";
+    font-family: "FabricMDL2Icons"; 
+    display: inline-block;
+}
+
+/* Remove default calendar icon */
+.power-app-field-input input[type="date"]::-webkit-calendar-picker-indicator{
+    opacity: 0;
+    z-index: -1;
+}
+
+.power-app-field-input input[type="date"]{
+    padding-right: 0;
+    cursor: text;
+}
+
+.power-app-field-input input[type="number"]{
+    -moz-appearance: textfield;
+}
+
+input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+@media screen and (max-width: 600px) {
+    .power-app-header h1 { font-size: 1rem;}
+    .power-app-header button i { font-size: 1.3rem; }
+    .power-app-field-label { font-size: 1.1rem; }
+    .power-app-field-required { font-size: 1.1rem; }
+    .power-app-field-input input { font-size: 1.1rem; }
+    .power-app-icon-suffix i { font-size: 1.2rem; }
+}

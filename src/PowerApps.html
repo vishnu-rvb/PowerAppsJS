@@ -1,0 +1,92 @@
+<template class="header-control">
+    <div class="power-app-header">
+        <button id="btn-clear">
+            <i class="ms-Icon ms-Icon--Cancel" aria-hidden="true"></i>
+        </button>
+        <h1>{{title}}</h1>
+        <button id="btn-submit">
+            <i class="ms-Icon ms-Icon--Accept" aria-hidden="true"></i>
+        </button>
+    </div>
+</template>
+
+<template class="number-control">
+    <div class="power-app-form-field" type="number">
+        <span class="power-app-field-required">*</span>
+        <div class="power-app-field-value">
+            <div class="power-app-field-label">{{label}}</div>
+            <div class="power-app-field-input">
+                <input type="number" id="{{id}}" required>
+                <span class="power-app-icon-suffix blank"></span>
+            </div>
+        </div>
+    </div>
+</template>
+
+<template class="text-control">
+    <div class="power-app-form-field" type="text">
+        <span class="power-app-field-required">*</span>
+        <div class="power-app-field-value">
+            <div class="power-app-field-label">{{label}}</div>
+            <div class="power-app-field-input">
+                <input type="text" id="{{id}}" required>
+                <span class="power-app-icon-suffix blank"></span>
+            </div>
+        </div>
+    </div>
+</template>
+
+<template class="date-control">
+    <div class="power-app-form-field" type="date">
+        <span class="power-app-field-required">*</span>
+        <div class="power-app-field-value">
+            <div class="power-app-field-label">{{label}}</div>
+            <div class="power-app-field-input">
+                <input id="{{id}}" type="date" required>
+                <span class="power-app-icon-suffix calendar">
+                    <i class="ms-Icon ms-Icon--Calendar" aria-hidden="true"></i>
+                </span>
+            </div>
+        </div>
+    </div>
+</template>
+
+<template class="dropdown-control">
+    <div class="power-app-form-field" type="dropdown">
+        <span class="power-app-field-required">*</span>
+        <div class="power-app-field-value">
+            <div class="power-app-field-label">{{label}}</div>
+            <div class="power-app-field-input">
+                <div class="dropdown">
+                    <input type="text" id="{{id}}" readonly required>
+                    <div class="list">
+                        <option value="">None</option>
+                    </div>
+                </div>
+                <span class="power-app-icon-suffix arrowdown">
+                    <i class="ms-Icon ms-Icon--ChevronDown" aria-hidden="true"></i>
+                </span>
+            </div>
+        </div>
+    </div>
+</template>
+
+<template class="combobox-control">
+    <div class="power-app-form-field" type="combobox">
+        <span class="power-app-field-required">*</span>
+        <div class="power-app-field-value">
+            <div class="power-app-field-label">{{label}}</div>
+            <div class="power-app-field-input">
+                <div class="combobox">
+                    <input type="text" id="{{id}}" placeholder="Enter {{label}}" required>
+                    <div class="list">
+                        <option value="">None</option>
+                    </div>
+                </div>
+                <span class="power-app-icon-suffix arrowdown">
+                    <i class="ms-Icon ms-Icon--ChevronDown" aria-hidden="true"></i>
+                </span>
+            </div>
+        </div>
+    </div>
+</template>
