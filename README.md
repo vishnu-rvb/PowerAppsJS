@@ -35,9 +35,7 @@ Currently, the library relies on the following external styles and scripts:
 
 <link rel="stylesheet" href="https://static2.sharepointonline.com/files/fabric/office-ui-fabric-core/11.0.0/css/fabric.min.css">
 <link rel="stylesheet" href="https://npmcdn.com/flatpickr/dist/themes/material_orange.css"><!-- change theme for date picker as needed -->
-
 <link rel="stylesheet" href="static/PowerApps.css">
-
 <script src="https://cdn.jsdelivr.net/npm/flatpickr" defer></script>
 
 ⚠️ These must be included manually for now
