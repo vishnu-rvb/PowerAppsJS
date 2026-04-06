@@ -128,6 +128,10 @@ instance.add_control(selector,templateName,data={})
 - templateName: name of control type (e.g date,dropdown,text etc)
 - data: Configuration parameters for control like field name, field id , options etc
 
+instance.update_params(inputSelector,data)
+- inputSelector: CSS selector of input field which needs to be changed
+- data: New data that will replace old data if specified. if options provided they will be replaced.
+
 Example:
 // add a dropdown control to form #myForm named Shift and options A,B & C.
 PA.add_control('#myForm','dropdown',{
@@ -138,21 +142,36 @@ PA.add_control('#myForm','dropdown',{
 
 //access selected value by id shift
 console.log(document.getElementById('shift').value);
+
+//access control element by id line and display control type
+const lineField=document.querySelector('#line').closest('.power-app-form-field');
+console.log(lineField.getAttribute('power-app-type'));
+
+//print Options and change data Configuration Options
+console.log(lineField.querySelectorAll('option'));
+PA.update_params('#line',{label:'numbers',options:[1,2,3,4]});
+
+//change theme color by overriding in css
+:root {
+    --pa-bg: #f65810;
+    --pa-label-color:#00126b;
+    --pa-label-bg: #fddecf;
+    --pa-font-color: white;
+}
 ```
 ---
 ### ⚙️ data Configuration Options
 
-#### 🔹 Common Options (All Controls)
+#### 🔹 Common Options
 
 | Property | Type | Description |
 |--------|------|-------------|
 | `label` | `string` | Display label for the field. Not available in header control |
 | `id` | `string` | HTML `id` attribute for the input |
+| `name` | `string` | HTML `name` attribute for the input |
 | `required` | `boolean` | Marks field as required (`true` / `false`) |
 
----
-
-#### 🔹 Header Control (`templateName: "header"`)
+#### 🔹 Header Control
 
 | Property | Type | Description |
 |--------|------|-------------|
@@ -160,22 +179,19 @@ console.log(document.getElementById('shift').value);
 | `submit` | `function` | Callback for submit button |
 | `reset` | `function` | Callback for reset/clear button |
 
----
 
-#### 🔹 Number Control (`templateName: "number"`)
+#### 🔹 Number Control
 
 | Property | Type | Description |
 |--------|------|-------------|
 | `min` | `number` | Minimum allowed value |
 | `max` | `number` | Maximum allowed value |
 
----
-
 #### 🔹 Dropdown & Combobox Controls
 
 | Property | Type | Description |
 |--------|------|-------------|
-| `options` | `array` | List of selectable values |
+| `options` | `array` | List of selectable values. A default 'None' will be always present for blank values |
 
 ---
 # ⚠️ Limitations (v0)
@@ -183,8 +199,7 @@ console.log(document.getElementById('shift').value);
 - Dependencies must be included manually
 - No built-in state management
 - No validation engine (basic only)
-- No data binding (manual handling required)
-- No packaging/CDN support yet
+- To manually handle form processing
 
 ---
 

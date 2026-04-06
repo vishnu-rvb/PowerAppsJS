@@ -40,16 +40,21 @@ export class PowerApps{
                 };
             };
             if('id' in data){element.querySelector('.power-app-field-input input').id=data['id'];};
+            if('name' in data){element.querySelector('.power-app-field-input input').name=data['name'];};
             if(controlType==='number'){                    
                 if('min' in data){element.querySelector('.power-app-field-input input').min=String(data['min']);}
                 if('max' in data){element.querySelector('.power-app-field-input input').max=String(data['max']);}
             }
             else if(controlType==='combobox' || controlType==='dropdown'){
                 if('options' in data){
+                    //clear old options
+                    const oldOptions=element.querySelectorAll('.list option');
+                    for(let i=1;i<oldOptions.length;i++){oldOptions[i].remove()};
+                    //add new options
                     for(const i of data['options']){
                         const option=document.createElement('option');
-                        option.value=i;
-                        option.innerHTML=i;
+                        option.value=String(i).trim();
+                        option.innerHTML=String(i).trim();
                         element.querySelector('.power-app-field-input .list').appendChild(option);
                     };
                 };
@@ -60,7 +65,11 @@ export class PowerApps{
     _bind_control(element,controlType){
 
         if(controlType==='date'){
-            flatpickr(element.querySelector('input[type="date"]'),{
+            //clear old flatpickr
+            if(element.querySelector('input')._flatpickr){
+                element.querySelector('input')._flatpickr.destroy();
+            };
+            flatpickr(element.querySelector('input'),{
                 dateFormat: "Y-m-d",
                 altInput: true,
                 altFormat:'d-m-Y'
@@ -106,5 +115,15 @@ export class PowerApps{
         this._bind_control(control,templateName);
 
         for(const i of document.querySelectorAll(selector)){i.appendChild(control);};
+    }
+
+    update_params(inputSelector,data){
+        const inputs=document.querySelectorAll(inputSelector);
+        for(const i of inputs){
+            const control=i.closest('.power-app-form-field');
+            const controlType=control.getAttribute('power-app-type');
+            this._set_params(control,controlType,data);
+            this._bind_control(control,controlType);
+        };
     }
 }

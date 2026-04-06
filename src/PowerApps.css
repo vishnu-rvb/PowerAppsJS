@@ -1,5 +1,5 @@
 :root {
-    --pa-orange: #f65810;
+    --pa-bg: #f65810;
     --pa-label-color:#00126b;
     --pa-label-bg: #fddecf;
     --pa-font-color: white;
@@ -10,7 +10,7 @@
 }
 
 .power-app-header {
-    background-color: var(--pa-orange);
+    background-color: var(--pa-bg);
     height: 65px;
     display: flex;
     align-items: center;
@@ -82,7 +82,7 @@
     flex: 1;
     padding: 5px;
     padding-right: 50px;
-    border: 1px solid var(--pa-orange);
+    border: 1px solid var(--pa-bg);
     border-right: none;
     font-size: 1.3rem;
     width: 100%;
@@ -125,7 +125,7 @@
     width: 100%;
     overflow-y: auto;
     background: var(--pa-font-color);
-    border: 1px solid var(--pa-orange);
+    border: 1px solid var(--pa-bg);
     box-shadow: 0 4px 6px rgba(0,0,0,0.1);
     z-index: 1;
     display: none;
@@ -138,8 +138,8 @@
     height: 100%;
     width: 45px;
     min-width: 45px;
-    background-color: var(--pa-orange);
-    border: 1px solid var(--pa-orange);
+    background-color: var(--pa-bg);
+    border: 1px solid var(--pa-bg);
     border-left: none;
     display: flex;
     justify-content: center;
