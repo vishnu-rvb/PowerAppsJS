@@ -140,7 +140,44 @@ PA.add_control('#myForm','dropdown',{
 console.log(document.getElementById('shift').value);
 ```
 ---
+### ⚙️ data Configuration Options
 
+#### 🔹 Common Options (All Controls)
+
+| Property | Type | Description |
+|--------|------|-------------|
+| `label` | `string` | Display label for the field. Not available in header control |
+| `id` | `string` | HTML `id` attribute for the input |
+| `required` | `boolean` | Marks field as required (`true` / `false`) |
+
+---
+
+#### 🔹 Header Control (`templateName: "header"`)
+
+| Property | Type | Description |
+|--------|------|-------------|
+| `title` | `string` | Title text shown in header |
+| `submit` | `function` | Callback for submit button |
+| `reset` | `function` | Callback for reset/clear button |
+
+---
+
+#### 🔹 Number Control (`templateName: "number"`)
+
+| Property | Type | Description |
+|--------|------|-------------|
+| `min` | `number` | Minimum allowed value |
+| `max` | `number` | Maximum allowed value |
+
+---
+
+#### 🔹 Dropdown & Combobox Controls
+
+| Property | Type | Description |
+|--------|------|-------------|
+| `options` | `array` | List of selectable values |
+
+---
 # ⚠️ Limitations (v0)
 
 - Dependencies must be included manually
