@@ -19,14 +19,16 @@ This library is designed for building internal tools quickly with a consistent U
 
 # 📁 Project Structure
 
+```
 /static
-   PowerApps.js      # Core library
-   PowerApps.css     # Styling
-   PowerApps.html    # HTML templates (internal)
-
-index.html           # (optional test file)
+    PowerApps.js    # Core library
+    PowerApps.css   # Styling
+    PowerApps.html  # HTML templates (internal)
+index.html  # Demo
+/Examples
+    Example1.html # Importing Example
 README.md
-
+```
 ---
 
 # 📦 Dependencies
@@ -34,8 +36,11 @@ README.md
 Currently, the library relies on the following external styles and scripts:
 
 https://static2.sharepointonline.com/files/fabric/office-ui-fabric-core/11.0.0/css/fabric.min.css
+
 https://cdn.jsdelivr.net/npm/flatpickr
+
 https://npmcdn.com/flatpickr/dist/themes/material_orange.css # Change theme for date picker as needed
+
 https://cdn.jsdelivr.net/gh/vishnu-rvb/PowerAppsJS/src/PowerApps.css
 
 ⚠️ These must be included manually for now
@@ -45,59 +50,63 @@ https://cdn.jsdelivr.net/gh/vishnu-rvb/PowerAppsJS/src/PowerApps.css
 # ⚡ Getting Started
 
 ### 1. Include required files
-
-<link rel="stylesheet" href="static/PowerApps.css">
-<script src="static/PowerApps.js"></script>
-
+```
+# html
+<link type="text/css" rel="stylesheet" href="https://cdn.jsdelivr.net/gh/vishnu-rvb/PowerAppsJS/src/PowerApps.css">
+ or
+<script type="module">
+    import { PowerApps } from "https://cdn.jsdelivr.net/gh/vishnu-rvb/PowerAppsJS/src/PowerApps.js";
+</script>
+```
 ---
 
 ### 2. Initialize
-
+```
 const PA = new PowerApps();
 await PA.init();
-
+```
 ---
 
 # 🧠 Usage Example
-
+```
 const PA = new PowerApps();
 await PA.init();
 
 PA.add_control('header','header',{
-    'title':'GSS Inhouse Daily Issues',
-    'reset': resetForm,
-    'submit': submitForm
+    title:'GSS Inhouse Daily Issues',
+    reset: resetForm,
+    submit: submitForm
 });
 
 PA.add_control('#myForm','date',{
-    'label':'Date',
-    'id':'date'
+    label:'Date',
+    id:'date'
 });
 
 PA.add_control('#myForm','dropdown',{
-    'label':'Shift',
-    'id':'shift',
-    'options':['A','B','C']
+    label:'Shift',
+    id:'shift',
+    options:['A','B','C']
 });
 
 PA.add_control('#myForm','combobox',{
-    'label':'Line',
-    'id':'line',
-    'options':['Milling','Drilling','Lathe','Robo welder']
+    label:'Line',
+    id:'line',
+    options:['Milling','Drilling','Lathe','Robo welder']
 });
 
 PA.add_control('#myForm','combobox',{
-    'label':'Operator',
-    'id':'operator',
+    label:'Operator',
+    id:'operator',
     required:false
 });
 
 PA.add_control('#myForm','number',{
-    'label':'Output',
-    'id':'output',
-    'min':0
+    label:'Output',
+    id:'output',
+    min:0
 });
-
+```
 ---
 
 # 🎛 Available Controls (v0)
@@ -112,26 +121,24 @@ PA.add_control('#myForm','number',{
 ---
 
 # 🧩 API Reference
+```
+instance.add_control(selector,templateName,data={})
 
-const PA = new PowerApps()
-
-await PA.init()
-
-PA.add_control(parent, type, options)
-
-- parent: CSS selector (e.g., #form, #container)
-- type: control type
-- options: configuration object
+- selector: CSS selector (e.g., #form, #container etc) to which control to be attached
+- templateName: name of control type (e.g date,dropdown,text etc)
+- data: Configuration parameters for control like field name, field id , options etc
 
 Example:
-
+// add a dropdown control to form #myForm named Shift and options A,B & C.
 PA.add_control('#myForm','dropdown',{
-    'label':'Shift',
-    'id':'shift',
-    'options':['A','B','C']
+    label:'Shift',
+    id:'shift',
+    options:['A','B','C']
 });
 
-console.log(document.getElementById('shift').value)
+//access selected value by id shift
+console.log(document.getElementById('shift').value);
+```
 ---
 
 # ⚠️ Limitations (v0)
@@ -149,7 +156,6 @@ console.log(document.getElementById('shift').value)
 - Designed primarily for internal tools and dashboards
 - Best used with structured backend (Power Automate, APIs, etc.)
 - Recommended to use inside a <form> container for structured inputs
-- Can be extended easily by modifying PowerApps.js
 
 ---
 
@@ -161,7 +167,8 @@ Not defined yet
 
 # 🙌 Contributing
 
-Currently in early development (v0). Contributions, ideas, and improvements are welcome.
+Currently in early development (v0).
+Contributions, ideas, and improvements are welcome.
 
 ---
 

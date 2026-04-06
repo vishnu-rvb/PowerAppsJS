@@ -5,7 +5,7 @@ export class PowerApps{
 
     async init(){
         try{
-            const response=await fetch('./src/PowerApps.html');
+            const response=await fetch('/src/PowerApps.html');
             if(response.ok){
                 const html=await response.text();
                 const parser=new DOMParser();
