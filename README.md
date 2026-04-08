@@ -197,7 +197,6 @@ PA.update_params('#line',{label:'numbers',options:[1,2,3,4]});
 # ⚠️ Limitations (v0)
 
 - Dependencies must be included manually
-- No built-in state management
 - No validation engine (basic only)
 - To manually handle form processing
 

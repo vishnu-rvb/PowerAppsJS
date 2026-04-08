@@ -1,129 +1,249 @@
-export class PowerApps{
-    constructor(){
-        this.templates=null;
+export class PowerApps {
+    constructor() {
+        this.templates = null;
+        this.controlMap = {
+            text: textControl,
+            number: numberControl,
+            date: dateControl,
+            dropdown: dropdownControl,
+            combobox: comboboxControl,
+            header: headerControl
+        };
     }
 
-    async init(){
-        try{
-            const response=await fetch(new URL('./PowerApps.html', import.meta.url).href);
-            if(response.ok){
-                const html=await response.text();
-                const parser=new DOMParser();
-                this.templates=parser.parseFromString(html,'text/html');
+    async init() {
+        try {
+            const response = await fetch(new URL('./PowerApps.html', import.meta.url).href);
+            if (response.ok) {
+                const html = await response.text();
+                this.templates = new DOMParser().parseFromString(html, 'text/html');
                 return this;
-            }
-        }
-        catch(error){
-            console.error('Failed to load Power Apps');
+            };
+        } 
+        catch (error) {
+            console.error('Failed to load Power Apps templates', error);
         };
     }
 
-    _set_params(element,controlType,data){
-        if(data['required']===false){
-            element.querySelector('.power-app-field-required').innerHTML='';
-            element.querySelector('input').required=false;
-        }
-        else if(data['required']===true){
-            element.querySelector('.power-app-field-required').text='*';
-            element.querySelector('input').required=true;
+    add_control(selector, type, data = {}) {
+        if (!this.templates) return console.error('Run init() first');
+
+        const template = this.templates.querySelector('.'+type+'-control');
+        if (!template) return console.error(`Template ${type} not found`);
+
+        const targets = document.querySelectorAll(selector);
+        const controls = [];
+        for(const target of targets){
+            const control = document.importNode(template.content, true).firstElementChild;
+            target.appendChild(control);
+            const ControlClass = this.controlMap[type] || PowerApps_Control;
+            const control_instance = new ControlClass(control, data);
+            controls.push(control_instance);
         };
-        if(controlType=='header'){
-            if('title' in data){element.querySelector('h1').innerHTML=data['title'];}
-            if('reset' in data){element.querySelector('#btn-clear').addEventListener('click', data['reset']);}
-            if('submit' in data){element.querySelector('#btn-submit').addEventListener('click', data['submit']);}
-        }
-        else{
-            if('label' in data){
-                element.querySelector('.power-app-field-label').innerHTML=data['label'];
-                if(controlType==='combobox'){
-                    element.querySelector('.power-app-field-input input').placeholder='Enter '+data['label'];
-                };
-            };
-            if('id' in data){element.querySelector('.power-app-field-input input').id=data['id'];};
-            if('name' in data){element.querySelector('.power-app-field-input input').name=data['name'];};
-            if(controlType==='number'){                    
-                if('min' in data){element.querySelector('.power-app-field-input input').min=String(data['min']);}
-                if('max' in data){element.querySelector('.power-app-field-input input').max=String(data['max']);}
-            }
-            else if(controlType==='combobox' || controlType==='dropdown'){
-                if('options' in data){
-                    //clear old options
-                    const oldOptions=element.querySelectorAll('.list option');
-                    for(let i=1;i<oldOptions.length;i++){oldOptions[i].remove()};
-                    //add new options
-                    for(const i of data['options']){
-                        const option=document.createElement('option');
-                        option.value=String(i).trim();
-                        option.innerHTML=String(i).trim();
-                        element.querySelector('.power-app-field-input .list').appendChild(option);
-                    };
-                };
-            };
-        };
+
+        return controls.length === 1 ? controls[0] : controls;
+    }
+}
+
+export class PowerApps_Control{
+    constructor(control, data){
+        this.control = control;
+        this.input = this.control.querySelector('input');
+        this.labelHTML = this.control.querySelector('.power-app-field-label');
+        this.requiredHTML = this.control.querySelector('.power-app-field-required');
+        if(data){this._init(data);};
     }
 
-    _bind_control(element,controlType){
-
-        if(controlType==='date'){
-            //clear old flatpickr
-            if(element.querySelector('input')._flatpickr){
-                element.querySelector('input')._flatpickr.destroy();
-            };
-            flatpickr(element.querySelector('input'),{
-                dateFormat: "Y-m-d",
-                altInput: true,
-                altFormat:'d-m-Y'
-            });
-        }
-        else if(controlType==='dropdown' || controlType==='combobox'){
-            const input=element.querySelector('input');
-            const select=element.querySelector('.list');
-            //on click input open dropdown
-            input.addEventListener('click',()=>{
-                select.style.display='block';
-            });
-            //on select switch value and close dropdown
-            for(const i of select.querySelectorAll('option')){
-                i.addEventListener('click',()=>{
-                    input.value=i.value;
-                    select.style.display= 'none';
-                });
-            };
-            //off click input close dropdown
-            document.addEventListener('click',(event)=>{
-                if(! element.contains(event.target)){select.style.display='none'};
-            });
-            if(controlType==='combobox'){
-                //on input filter options
-                input.addEventListener('input',()=>{
-                    for(const i of select.querySelectorAll('option')){
-                        i.style.display= i.value.toLowerCase().includes(input.value.toLowerCase()) ? 'block':'none';
-                    };
-                });
-            };
-        };
+    _init(data){
+        if(data['label']){ this.label = String(data['label']); };
+        if(data['id']){ this.id = String(data['id']); };
+        if(data['value']){ this.value=data['value']; };
+        if(data['name']){ this.name=data['name']; };
+        if(data['required'] !== undefined){ this.required=!!data['required']; };
     }
 
-    add_control(selector,templateName,data={}){
-        if (!this.templates) return console.error('Failed to load Power Apps');
+    // Getters
+    get label(){ return this.labelHTML? String(this.labelHTML.innerHTML):null; }
+    get id(){ return this.input.id? String(this.input.id):null; }
+    get value(){ return this.input.value? String(this.input.value):null; }
+    get name(){ return this.input.name? String(this.input.name):null; }
+    get required(){ return this.input.required? !!this.input.required:null; }
+    
+    //Setters
+    set label(val){ 
+        if(this.labelHTML){ this.labelHTML.innerHTML = String(val); };
+    }
+    set id(val){ 
+        if(this.input){ this.input.id = String(val); };
+    }
+    set value(val){ 
+        if(this.input){
+            this.input.value = String(val);
+            this.input.dispatchEvent(new Event('change', { bubbles: true }));
+        };
+    }
+    set name(val){ 
+        if(this.input){ this.input.name = String(val); };
+    }
+    set required(val) {
+        if(this.input){ this.input.required = val; };
+        if(this.requiredHTML){ this.requiredHTML.innerHTML = val ? '*' : ''; };
+    }
 
-        const template=this.templates.querySelector('.' + templateName+'-control');
-        if (!template) return console.error(`${templateName} not found`);
+    // state methods
+    hide() { this.control.style.display = 'none'; }
+    show() { this.control.style.display = ''; }
+}
+
+export class dateControl extends PowerApps_Control {
+    constructor(control, data) {
+        super(control, data);
         
-        let control=document.importNode(template.content, true).firstElementChild;
-        this._set_params(control,templateName,data);
-        this._bind_control(control,templateName);
-
-        for(const i of document.querySelectorAll(selector)){i.appendChild(control);};
+        // bind flatpickr
+        this.picker = flatpickr(this.input, {
+            dateFormat: "Y-m-d",
+            altFormat: "d-m-Y",
+            altInput: true
+        });
     }
 
-    update_params(inputSelector,data){
-        const inputs=document.querySelectorAll(inputSelector);
-        for(const i of inputs){
-            const control=i.closest('.power-app-form-field');
-            const controlType=control.getAttribute('power-app-type');
-            this._set_params(control,controlType,data);
-            this._bind_control(control,controlType);
+    // Override value setter to update the calendar UI too
+    set value(val) {
+        super.value = val;
+        this.picker.setDate(String(val),true,String(this.picker.config.dateFormat));
+    }
+}
+
+export class textControl extends PowerApps_Control {}
+
+export class numberControl extends PowerApps_Control {
+    _init(data){
+        super._init(data);
+        if(data['min']){this.min=data['min'];};
+        if(data['max']){this.max=data['max'];};
+    }
+    //getters
+    get min(){ return this.input.min? Number(this.input.min):null; }
+    get max(){ return this.input.max? Number(this.input.max):null; }
+    //setter
+    set min(val){ if(this.input){this.input.min=String(val);} }
+    set max(val){ if(this.input){this.input.max=String(val);} }
+    set value(val){ 
+        if(this.input){
+            let clip_val=val;
+            if(this.min){clip_val= Math.max(Number(val),this.min);};
+            if(this.max){clip_val= Math.min(Number(val),this.max);};
+            super.value=clip_val;
         };
+    }
+}
+
+export class headerControl extends PowerApps_Control {
+    _init(data){
+        super._init(data);
+        this.titleHTML=this.control.querySelector('h1');
+        this.btn_clear=this.control.querySelector('#btn-clear');
+        this.btn_submit=this.control.querySelector('#btn-submit');
+        if(data['title']){ this.title=data['title']; };
+        if(data['reset']){ this.reset=data['reset']; };
+        if(data['submit']){ this.submit=data['submit']; };
+    }
+    //getters
+    get title(){ return this.titleHTML? String(this.titleHTML.innerHTML):null; }
+    //setter
+    set title(val){ if(this.titleHTML){this.titleHTML.innerHTML = String(val);}; }
+    set reset(val){ if(this.btn_clear){this.btn_clear.addEventListener('click',val);} }
+    set submit(val){ if(this.btn_submit){this.btn_submit.addEventListener('click',val);} }
+}
+
+export class dropdownControl extends PowerApps_Control {
+    _init(data){
+        super._init(data);
+        this.listHTML=this.control.querySelector('.list');
+        this._defaultOption=this.listHTML.querySelector('option:first-child');
+        this._optionsCache=[];
+
+        //on click input open dropdown
+        this.input.addEventListener('click',()=>{ this.open(); });
+        //off click input close dropdown
+        document.addEventListener('click',(event)=>{
+            if(! this.input.contains(event.target)){ this.close(); };
+        });
+        // on default select
+        this._defaultOption.addEventListener('click',()=>{
+            this.value=this._defaultOption.value;
+            this.close();
+        });
+        //set options
+        if(data['options']){ this.options=data['options']; };
+    }
+    get options(){
+        if(this.listHTML){
+            return Array.from(
+                this.listHTML.querySelectorAll('option'),i=>String(i.value))
+                .filter(i=> i!=='');
+        }
+        else {return [];};
+    }
+    set options(val){
+        if(!Array.isArray(val) || !this.listHTML){ return; };
+        const cleaned_val=val.map(i=>String(i).trim()).filter(i=>i!=='');
+        const oldOptions=Array.from(this.listHTML.querySelectorAll('option')).filter(i=>i.value!=='');
+        const fragment = document.createDocumentFragment(); //fragments is faster
+        let appendFragment=null;
+        for(let i=0;i<=Math.max(oldOptions.length-1,cleaned_val.length-1);i++){
+            if ( i<=Math.min(oldOptions.length-1,cleaned_val.length-1) ){
+                    oldOptions[i].value=cleaned_val[i-1];
+                    oldOptions[i].innerHTML=cleaned_val[i-1];
+                    this._optionsCache[i].value=oldOptions[i];
+            }
+            else if(oldOptions.length>cleaned_val.length){ 
+                oldOptions[i].remove();
+                this._optionsCache.splice(1, i);
+            } //remove extra options
+            else{
+                if(appendFragment===null) { appendFragment=true; };
+                const option=document.createElement('option');
+                option.innerHTML=cleaned_val[i];
+                option.innerHTML=cleaned_val[i];
+                option.addEventListener('click',()=>{
+                    this.value=option.value;
+                    this.close();
+                });
+                //this.listHTML.appendChild(option);
+                fragment.appendChild(option);
+                this._optionsCache.push(option);
+            };
+        };
+        if(appendFragment){ this.listHTML.appendChild(fragment); };
+    }
+
+    open(){this.listHTML.style.display='block';}
+    close(){this.listHTML.style.display='none';}
+}
+
+export class comboboxControl extends dropdownControl{
+    _init(data){
+        super._init(data);
+        if(data['label']){this.label=data['label'];};
+        //on input filter options
+        this.input.addEventListener('input',()=>{
+            for (let i = 0; i < this._optionsCache.length; i++) {
+                const option = this._optionsCache[i];
+                const visible = option.value.toLowerCase().includes(this.value?.toLowerCase());
+                const state = option.style.display;
+                if (visible){ 
+                    if(state==='none'){option.style.display = 'block';}; 
+                }
+                else{ 
+                    if(state==='block'){option.style.display = 'none';};
+                };
+            };
+        });
+    }
+    get label(){return super.label;}
+    set label(val){
+        super.label=val;
+        this.input.placeholder=`Enter ${this.label}`;
     }
 }
