@@ -55,7 +55,7 @@ https://cdn.jsdelivr.net/gh/vishnu-rvb/PowerAppsJS/src/PowerApps.css
 <link type="text/css" rel="stylesheet" href="https://cdn.jsdelivr.net/gh/vishnu-rvb/PowerAppsJS/src/PowerApps.css">
  or
 <script type="module">
-    import { PowerApps } from "https://cdn.jsdelivr.net/gh/vishnu-rvb/PowerAppsJS/src/PowerApps.js";
+    import { PowerApps } from "https://cdn.jsdelivr.net/gh/vishnu-rvb/PowerAppsJS@v0/src/PowerApps.js";
 </script>
 ```
 ---
@@ -72,39 +72,40 @@ await PA.init();
 const PA = new PowerApps();
 await PA.init();
 
-PA.add_control('header','header',{
-    title:'GSS Inhouse Daily Issues',
+const myHeader=PA.add_control('header','header',{
+    title:'PowerApps JS Example',
     reset: resetForm,
     submit: submitForm
 });
 
-PA.add_control('#myForm','date',{
+const myDate=PA.add_control('#myForm','date',{
     label:'Date',
     id:'date'
 });
 
-PA.add_control('#myForm','dropdown',{
+const myDropdown=PA.add_control('#myForm','dropdown',{
     label:'Shift',
     id:'shift',
-    options:['A','B','C']
+    options:['A','B','C'],
+    required:false
 });
 
-PA.add_control('#myForm','combobox',{
+const myCombobox=PA.add_control('#myForm','combobox',{
     label:'Line',
     id:'line',
     options:['Milling','Drilling','Lathe','Robo welder']
 });
 
-PA.add_control('#myForm','combobox',{
-    label:'Operator',
-    id:'operator',
-    required:false
-});
-
-PA.add_control('#myForm','number',{
+const myNumber=PA.add_control('#myForm','number',{
     label:'Output',
     id:'output',
     min:0
+});
+
+const myText=PA.add_control('#myForm','text',{
+    label:'Remarks',
+    id:'remarks',
+    multiline:true
 });
 ```
 ---
@@ -121,44 +122,56 @@ PA.add_control('#myForm','number',{
 ---
 
 # 🧩 API Reference
-```
-instance.add_control(selector,templateName,data={})
+`instance.init()`
+Mandatory before adding any controls
+`instance.add_control( selector, templateName, data = } )`
 
-- selector: CSS selector (e.g., #form, #container etc) to which control to be attached
+- selector: CSS selector (e.g., #form, #container etc) to which controls to be attached
 - templateName: name of control type (e.g date,dropdown,text etc)
 - data: Configuration parameters for control like field name, field id , options etc
 
-instance.update_params(inputSelector,data)
-- inputSelector: CSS selector of input field which needs to be changed
-- data: New data that will replace old data if specified. if options provided they will be replaced.
+Returns control instance or array of control instances
 
-Example:
-// add a dropdown control to form #myForm named Shift and options A,B & C.
-PA.add_control('#myForm','dropdown',{
-    label:'Shift',
-    id:'shift',
-    options:['A','B','C']
+# Examples
+- Add a dropdown control to form #myForm named Shift and options A,B & C.
+```
+const myDropdown = PA.add_control( '#myForm', 'dropdown', {
+    label : 'Shift',
+    id : 'shift',
+    options : [ 'A', 'B', 'C' ]
 });
-
-//access selected value by id shift
-console.log(document.getElementById('shift').value);
-
-//access control element by id line and display control type
-const lineField=document.querySelector('#line').closest('.power-app-form-field');
-console.log(lineField.getAttribute('power-app-type'));
-
-//print Options and change data Configuration Options
-console.log(lineField.querySelectorAll('option'));
-PA.update_params('#line',{label:'numbers',options:[1,2,3,4]});
-
-//change theme color by overriding in css
+```
+- Access selected value by id and variable
+```
+console.log( document.getElementById( 'shift' ).value );
+console.log( myDropdown.value );
+```
+- Setting selected value by id shift and variable
+```
+document.getElementById( 'shift' ).value = 'A';
+myDropdown.value = 'A';
+```
+- Display control type
+```
+console.log( myDropdown.control.getAttribute( 'power-app-type' ) );
+```
+- Change data Configuration Options
+```
+myDropdown.label = 'my new label';
+```
+- Change theme color by overriding in css
+```
 :root {
-    --pa-bg: #f65810;
-    --pa-label-color:#00126b;
-    --pa-label-bg: #fddecf;
-    --pa-font-color: white;
+    --pa-bg : #f65810;
+    --pa-label-color : #00126b;
+    --pa-label-bg : #fddecf;
+    --pa-font-color : white;
 }
 ```
+- --pa-bg : Header/Icon fill color
+- pa-label-color : Label font color
+- --pa-label-bg : Label fill and input border color
+- --pa-font-color : input font color
 ---
 ### ⚙️ data Configuration Options
 
@@ -179,7 +192,6 @@ PA.update_params('#line',{label:'numbers',options:[1,2,3,4]});
 | `submit` | `function` | Callback for submit button |
 | `reset` | `function` | Callback for reset/clear button |
 
-
 #### 🔹 Number Control
 
 | Property | Type | Description |
@@ -187,19 +199,42 @@ PA.update_params('#line',{label:'numbers',options:[1,2,3,4]});
 | `min` | `number` | Minimum allowed value |
 | `max` | `number` | Maximum allowed value |
 
+#### 🔹 Text Control
+
+| Property | Type | Description |
+|--------|------|-------------|
+| `multiline` | `boolean` | Enables height expandable input |
+
 #### 🔹 Dropdown & Combobox Controls
 
 | Property | Type | Description |
 |--------|------|-------------|
 | `options` | `array` | List of selectable values. A default 'None' will be always present for blank values |
+| `multiselect` | `boolean` | Enables selection of multiple options |
 
+---
+# ⚠️ Control class Methods/Attributes
+
+🔹 **common:**
+ - `control` returns the control dom object
+ - `hide()` hides the entire control
+ - `show()` shows the entire control
+ - `on_change` callback for input change
+  
+🔹 **date:**
+ - `picker` returns the _flatpickr instance
+
+🔹 **dropdown/combobox:**
+ - `isOpen()` returns true/false if options menu is open/closed
+ - `open()` opens the options menu
+ - `close()` closes the options menu
+ - `toggle()` toggles the option menu
 ---
 # ⚠️ Limitations (v0)
 
 - Dependencies must be included manually
-- No validation engine (basic only)
+- To manually handle input validation
 - To manually handle form processing
-
 ---
 
 # 📌 Notes
@@ -207,7 +242,6 @@ PA.update_params('#line',{label:'numbers',options:[1,2,3,4]});
 - Designed primarily for internal tools and dashboards
 - Best used with structured backend (Power Automate, APIs, etc.)
 - Recommended to use inside a <form> container for structured inputs
-
 ---
 
 # 📄 License
@@ -219,7 +253,7 @@ Not defined yet
 # 🙌 Contributing
 
 Currently in early development (v0).
-Contributions, ideas, and improvements are welcome.
+Contributions, ideas and improvements are welcome.
 
 ---
 

@@ -62,7 +62,6 @@
         import { PowerApps } from "./src/PowerApps.js";
 
         document.addEventListener("DOMContentLoaded", async () => {
-
             const PA = new PowerApps();
             await PA.init();
 
@@ -82,37 +81,59 @@
 
             PA.add_control('#myForm','date',{
                 label:'Date',
-                id:'date'
+                id:'date',
+                name:'date'
             });
 
             PA.add_control('#myForm','dropdown',{
                 label:'Shift',
                 id:'shift',
-                options:['A','B','C']
+                name:'shift',
+                options:['A','B','C'],
+                multiselect:true
             });
             
-            PA.add_control('#myForm','combobox',{
+            const lineField = PA.add_control('#myForm','combobox',{
                 label:'Line',
                 id:'line',
+                name:'line',
                 options:['Milling','Drilling','Lathe','Robo welder']
             });
+            
+            const partData = {
+                Milling:['gear','blank'],
+                Drilling:['bracket','Nut','cylinder'],
+                Lathe:['bolt','shaft'],
+                'Robo welder':['gasket','plate','chasis']
+            };
 
-            PA.add_control('#myForm','combobox',{
-                label:'Operator',
-                id:'operator',
-                required:false
+            const partField = PA.add_control('#myForm','combobox',{
+                label:'Part',
+                id:'part',
+                name:'part'
+            });
+            
+            lineField.on_change( (line)=>{
+                const newOptions = partData[line] || [];
+                partField.options = newOptions;
+                partField.value='';
             });
 
             PA.add_control('#myForm','number',{
                 label:'Output',
                 id:'output',
+                name:'output',
+                required:false,
                 min:0
             });
 
             PA.add_control('#myForm','text',{
                 label:'Remarks',
-                id:'remarks'
+                id:'remarks',
+                name:'remarks',
+                multiline:true
             });
+
         });
     </script>
 

@@ -78,14 +78,31 @@
     height: 45px;
 }
 
-.power-app-field-input input{
+.power-app-field-input input, .power-app-field-input textarea {
     flex: 1;
     padding: 5px;
     padding-right: 50px;
     border: 1px solid var(--pa-bg);
     border-right: none;
+    outline: none;
     font-size: 1.3rem;
     width: 100%;
+} 
+
+.power-app-field-input input[type='text'] {
+    display: block;
+    z-index: 0;
+}
+
+.power-app-field-input textarea {
+    resize: vertical;
+    min-height: 100%;
+    max-height: 200%;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    border: 1px solid var(--pa-bg);
+    display: none;
+    z-index: -1;
 }
 
 .power-app-field-input option {
@@ -94,7 +111,7 @@
     font-size: 1.2rem;
 }
 
-.power-app-field-input option:hover {
+.power-app-field-input option:hover, .power-app-field-input option[selected='true'] {
     background-color: var(--pa-label-bg);
 }
 
@@ -182,9 +199,12 @@
     -moz-appearance: textfield;
 }
 
-input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {
+.power-app-field-input input::-webkit-outer-spin-button, .power-app-field-input input::-webkit-inner-spin-button {
     -webkit-appearance: none;
     margin: 0;
+}
+.power-app-field-input textarea::-webkit-scrollbar {
+    display: none;
 }
 
 @media screen and (max-width: 600px) {
@@ -193,5 +213,6 @@ input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {
     .power-app-field-label { font-size: 1.1rem; }
     .power-app-field-required { font-size: 1.1rem; }
     .power-app-field-input input { font-size: 1.1rem; }
+    .power-app-field-input textarea { font-size: 1.1rem; }
     .power-app-icon-suffix i { font-size: 1.2rem; }
 }
