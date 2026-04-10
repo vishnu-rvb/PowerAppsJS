@@ -1,3 +1,29 @@
+let dependencies=[
+    { id : 'fabricCSS', type : 'link', attribs : { 
+        href : 'https://static2.sharepointonline.com/files/fabric/office-ui-fabric-core/11.0.0/css/fabric.min.css'
+    } },
+    { id : 'flatpickrCSS', type : 'link', attribs : {
+        href : 'https://npmcdn.com/flatpickr/dist/themes/material_orange.css'
+    } },
+    { id : 'flatpickrJS', type : 'script', attribs : {
+        src : 'https://cdn.jsdelivr.net/npm/flatpickr'
+    } },
+    { id : 'danfoJS', type : 'script', attribs : {
+        src : 'https://cdn.jsdelivr.net/npm/danfojs@1.2.0/lib/bundle.min.js'
+    } },
+    { id : 'jqueryJS', type : 'script', attribs : {
+        integrity : 'sha256-OaVG6prZf4v69dPg6PhVattBXkcOWQB62pdZ3ORyrao=',
+        crossorigin : 'anonymous',
+        src : 'https://code.jquery.com/jquery-4.0.0.min.js'
+    } },
+    { id:'datatablesCSS', type : 'link', attribs : {
+        src : 'https://cdn.datatables.net/2.3.7/css/dataTables.dataTables.css'
+    } },
+    { id:'datatablesJS', type : 'script', attribs : {
+        src : 'https://cdn.datatables.net/2.3.7/js/dataTables.js'
+    } }
+];
+
 export class PowerApps {
     constructor() {
         this.templates = undefined;
@@ -7,12 +33,14 @@ export class PowerApps {
             date: dateControl,
             dropdown: dropdownControl,
             combobox: comboboxControl,
-            header: headerControl
+            header: headerControl,
+            table: tableControl
         };
     }
 
     async init() {
         try {
+            await this._load_dependencies();
             const response = await fetch(new URL('./PowerApps.html', import.meta.url).href);
             if (response.ok) {
                 const html = await response.text();
@@ -23,6 +51,32 @@ export class PowerApps {
         catch (error) {
             console.error('Failed to load Power Apps templates', error);
         };
+    }
+
+    async _load_dependencies(){
+
+        if( document.querySelector( 'link[themeOverride]' ) ) { dependencies = dependencies.filter( i=> i['id']!=='flatpickrCSS' ) };
+
+        const promises = Array.from( dependencies, i => {
+            if( document.querySelector( `#${i['id']}` ) ) { return Promise.resolve() };
+            return new Promise( ( resolve, reject ) => {
+                const element=document.createElement( i['type'] );
+                element.id=i['id'];
+                for( const [ key, value ] of Object.entries( i['attribs'] ) ){ element.setAttribute( key, value ); };
+                if( i['type']==='link' ) { 
+                    element.setAttribute( 'rel', 'stylesheet' );
+                    element.setAttribute( 'type', 'text/css' );
+                    document.head.appendChild(element);
+                    resolve(); 
+                }
+                else if( i['type']==='script' ){ 
+                    element.onerror=reject;
+                    element.onload=resolve;
+                    document.head.appendChild(element);
+                };
+            } );
+        });
+        return Promise.all(promises);
     }
 
     add_control(selector, type, data = {}) {
@@ -295,4 +349,34 @@ class comboboxControl extends dropdownControl{
         super.label=val;
         this.input.placeholder=`Enter ${this.label}`;
     }
+}
+
+export class tableControl extends PowerApps_Control {
+    _init(data) {
+        super._init(data);
+        this.table = this.control.querySelector('table');
+        if( data['id'] ) { this.id = data['id']; };
+        if ( data['rows']  && data['columns'] ) {            
+            this.dataTable = new DataTable( this.table,{
+                columns : data['columns'].map( i => { return { title: i.trim() }; }),
+                data : data['rows'],
+                pageLength : data['pageLength'] || 10,
+                searching : data['searching'] || false,
+                ordering : data['ordering'] || false,
+                info : data['info'] || false,
+                responsive: data['responsive'] || false,
+                paging: data['paging'] || false
+            });
+        }
+    }
+
+    get value() { return this.dataTable.rows().data().toArray(); }
+    get id() { return this.control.querySelector('.power-app-field-table')? this.control.querySelector('.power-app-field-table').id:undefined; }
+    set id(val) {
+        if(this.control.querySelector('.power-app-field-table')){
+            this.control.querySelector('.power-app-field-table').id=String(val);
+        };
+    }
+
+    update(newData) { this.dataTable.clear().rows.add(newData).draw(); }
 }

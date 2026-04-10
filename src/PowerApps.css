@@ -3,6 +3,8 @@
     --pa-label-color:#00126b;
     --pa-label-bg: #fddecf;
     --pa-font-color: white;
+    --pa-table-border: #f65810;
+    --pa-table-header: #fddecf;
 }
 
 *{
@@ -203,8 +205,71 @@
     -webkit-appearance: none;
     margin: 0;
 }
+
 .power-app-field-input textarea::-webkit-scrollbar {
     display: none;
+}
+
+.power-app-form-field[power-app-type="table"] {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px;
+    width: 100%;
+}
+
+.power-app-form-field[power-app-type="table"] .power-app-field-label {
+    padding:5px;
+    font-size: 1.2rem;
+    width:25%;
+    border-left: 5px solid var(--pa-bg);
+    margin-bottom: 5px;
+    
+}
+
+.power-app-field-table {
+    padding: 0;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.power-app-field-table .dt-layout-row{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.power-app-field-table .dataTable {
+    border-collapse: collapse !important;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    margin-bottom: 5px;
+}
+
+.power-app-field-table th {
+    background-color: var(--pa-table-header) !important;
+    border: 1px solid var(--pa-table-border) !important;
+    font-weight: 600;
+    color: var(--pa-label-color);
+    padding: 15px 10px !important;
+}
+
+.power-app-field-table td {
+    padding: 10px !important;
+    border: 1px solid var(--pa-table-border) !important;
+}
+
+.power-app-field-table input, .power-app-field-table select {
+    border: 1px solid var(--pa-label-bg) !important;
+    padding: 5px 10px !important;
+    margin-bottom: 5px;
+    outline: none;
+}
+
+.power-app-field-table{
+    width: 100%;
+    overflow-x: auto;
+}
+
+.power-app-field-table table, .power-app-field-table .dt-layout-full{
+    width: 100%;
 }
 
 @media screen and (max-width: 600px) {
