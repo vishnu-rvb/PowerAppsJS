@@ -59,9 +59,9 @@
             <div class="power-app-field-label">{{label}}</div>
             <div class="power-app-field-input">
                 <div class="dropdown">
-                    <input type="text" id="{{id}}" readonly required>
+                    <input type="text" id="{{id}}" readonly required autocomplete="off">
                     <div class="list">
-                        <option value="">None</option>
+                        <div class="option" data-value="">None</div>
                     </div>
                 </div>
                 <span class="power-app-icon-suffix arrowdown">
@@ -79,9 +79,9 @@
             <div class="power-app-field-label">{{label}}</div>
             <div class="power-app-field-input">
                 <div class="combobox">
-                    <input type="text" id="{{id}}" placeholder="Enter {{label}}" required>
+                    <input type="text" id="{{id}}" placeholder="Enter {{label}}" required autocomplete="off">
                     <div class="list">
-                        <option value="">None</option>
+                        <div class="option" data-value="">None</div>
                     </div>
                 </div>
                 <span class="power-app-icon-suffix arrowdown">

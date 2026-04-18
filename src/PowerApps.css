@@ -21,7 +21,7 @@
     color: var(--pa-font-color);
     position: sticky;
     top: 0;
-    z-index: 2;
+    z-index: 1;
 }
 
 .power-app-header h1 {
@@ -96,6 +96,25 @@
     z-index: 0;
 }
 
+.power-app-field-input input[type="date"]::-webkit-calendar-picker-indicator{
+    opacity: 0;
+    z-index: -1;
+}
+
+.power-app-field-input input[type="date"]{
+    padding-right: 0;
+    cursor: text;
+}
+
+.power-app-field-input input[type="number"]{
+    -moz-appearance: textfield;
+}
+
+.power-app-field-input input::-webkit-outer-spin-button, .power-app-field-input input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
 .power-app-field-input textarea {
     resize: vertical;
     min-height: 100%;
@@ -107,14 +126,8 @@
     z-index: -1;
 }
 
-.power-app-field-input option {
-    padding: 5px;
-    cursor: pointer;
-    font-size: 1.2rem;
-}
-
-.power-app-field-input option:hover, .power-app-field-input option[selected='true'] {
-    background-color: var(--pa-label-bg);
+.power-app-field-input textarea::-webkit-scrollbar {
+    display: none;
 }
 
 .power-app-field-input .combobox{
@@ -123,6 +136,7 @@
     display: flex;
     flex-direction: column;
     height: 100%;
+    cursor: pointer;
 }
 
 .power-app-field-input .dropdown{
@@ -131,6 +145,7 @@
     display: flex;
     flex-direction: column;
     height: 100%;
+    cursor: pointer;
 }
 
 .power-app-field-input .combobox input, .power-app-field-input .dropdown input{
@@ -142,12 +157,45 @@
     top: 100%;
     left: 0;
     width: 100%;
+    max-height: 500%;
     overflow-y: auto;
     background: var(--pa-font-color);
     border: 1px solid var(--pa-bg);
     box-shadow: 0 4px 6px rgba(0,0,0,0.1);
     z-index: 1;
     display: none;
+}
+
+.power-app-field-input .list::-webkit-scrollbar {
+    width: 10px;
+}
+
+.power-app-field-input .list::-webkit-scrollbar-button {
+    display: none;
+    height: 0;
+    width: 0;
+}
+
+.power-app-field-input .list::-webkit-scrollbar-thumb {
+    background-color: var(--pa-label-color);
+    border-radius: 10px;
+}
+
+.power-app-field-input .list::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.power-app-field-input .option {
+    padding: 5px;
+    cursor: pointer;
+    font-size: 1.2rem;
+    display: block;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.power-app-field-input .option:hover, .power-app-field-input .option[selected='true'] {
+    background-color: var(--pa-label-bg);
 }
 
 .power-app-icon-suffix {
@@ -179,35 +227,10 @@
     background-color: transparent;
 }
 
-/* Force the icon to appear using the Fluent Font Unicode */ 
 .ms-Icon--Calendar::before {
     content: "\E787";
     font-family: "FabricMDL2Icons"; 
     display: inline-block;
-}
-
-/* Remove default calendar icon */
-.power-app-field-input input[type="date"]::-webkit-calendar-picker-indicator{
-    opacity: 0;
-    z-index: -1;
-}
-
-.power-app-field-input input[type="date"]{
-    padding-right: 0;
-    cursor: text;
-}
-
-.power-app-field-input input[type="number"]{
-    -moz-appearance: textfield;
-}
-
-.power-app-field-input input::-webkit-outer-spin-button, .power-app-field-input input::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
-}
-
-.power-app-field-input textarea::-webkit-scrollbar {
-    display: none;
 }
 
 .power-app-form-field[power-app-type="table"] {
