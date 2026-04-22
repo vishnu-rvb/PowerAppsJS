@@ -1,0 +1,69 @@
+:root {
+    --pa-title-border-left: #f65810;
+    --pa-font-color:#00126b;
+    --pa-search-border: #fddecf;
+    --pa-table-border: #f65810;
+    --pa-table-header: #fddecf;
+}
+
+.power-app-control[power-app-type="table"] {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px;
+    width: 100%;
+}
+
+.power-app-control[power-app-type="table"] .power-app-control-label {
+    width:25%;
+    padding:5px;
+    margin-bottom: 5px;
+    border-left: 5px solid var(--pa-title-border-left);
+    font-size: 1.2rem;
+    
+}
+
+.power-app-control-table {
+    padding: 0;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.power-app-control-table .dt-layout-row{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.power-app-control-table .dataTable {
+    border-collapse: collapse !important;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    margin-bottom: 5px;
+}
+
+.power-app-control-table th {
+    padding: 15px 10px !important;
+    border: 1px solid var(--pa-table-border) !important;
+    background-color: var(--pa-table-header) !important;
+    color: var(--pa-font-color);
+    font-weight: 600;
+}
+
+.power-app-control-table td {
+    padding: 10px !important;
+    border: 1px solid var(--pa-table-border) !important;
+}
+
+.power-app-control-table input, .power-app-control-table select {
+    border: 1px solid var(--pa-search-border) !important;
+    padding: 5px 10px !important;
+    margin-bottom: 5px;
+    outline: none;
+}
+
+.power-app-control-table{
+    width: 100%;
+    overflow-x: auto;
+}
+
+.power-app-control-table table, .power-app-control-table .dt-layout-full{
+    width: 100%;
+}

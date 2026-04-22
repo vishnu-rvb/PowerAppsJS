@@ -103,7 +103,6 @@ export class PowerApps {
             const control_instance = new ControlClass(control, data);
             controls.push(control_instance);
         };
-
         return controls.length === 1 ? controls[0] : controls;
     }
 }

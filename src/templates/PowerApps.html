@@ -1,0 +1,165 @@
+<template class="header">
+    <div class="power-app-header">
+        <button id="btn-clear">
+            <i class="ms-Icon ms-Icon--Cancel" aria-hidden="true"></i>
+        </button>
+        <h1>{{title}}</h1>
+        <button id="btn-submit">
+            <i class="ms-Icon ms-Icon--Accept" aria-hidden="true"></i>
+        </button>
+    </div>
+</template>
+
+<template class="number">
+    <div class="power-app-form-field" power-app-type="number">
+        <span class="power-app-field-required">*</span>
+        <div class="power-app-field-value">
+            <div class="power-app-field-label">{{label}}</div>
+            <div class="power-app-field-input">
+                <input type="number" id="{{id}}" required>
+                <!--<span class="power-app-icon-suffix blank"></span>-->
+            </div>
+        </div>
+    </div>
+</template>
+
+<template class="text">
+    <div class="power-app-form-field" power-app-type="text">
+        <span class="power-app-field-required">*</span>
+        <div class="power-app-field-value">
+            <div class="power-app-field-label">{{label}}</div>
+            <div class="power-app-field-input" multiline="false">
+                <input type="text" id="{{id}}" required>
+                <textarea></textarea>
+                <!--<span class="power-app-icon-suffix blank"></span>-->
+            </div>
+        </div>
+    </div>
+</template>
+
+<template class="date">
+    <div class="power-app-form-field" power-app-type="date">
+        <span class="power-app-field-required">*</span>
+        <div class="power-app-field-value">
+            <div class="power-app-field-label">{{label}}</div>
+            <div class="power-app-field-input">
+                <input id="{{id}}" type="date" required>
+                <span class="power-app-icon-suffix calendar">
+                    <i class="ms-Icon ms-Icon--Calendar" aria-hidden="true"></i>
+                </span>
+            </div>
+        </div>
+    </div>
+</template>
+
+<template class="dropdown">
+    <div class="power-app-form-field" power-app-type="dropdown">
+        <span class="power-app-field-required">*</span>
+        <div class="power-app-field-value">
+            <div class="power-app-field-label">{{label}}</div>
+            <div class="power-app-field-input">
+                <div class="dropdown">
+                    <input type="text" id="{{id}}" readonly required autocomplete="off">
+                    <div class="list">
+                        <div class="option" data-value="">None</div>
+                    </div>
+                </div>
+                <span class="power-app-icon-suffix arrowdown">
+                    <i class="ms-Icon ms-Icon--ChevronDown" aria-hidden="true"></i>
+                </span>
+            </div>
+        </div>
+    </div>
+</template>
+
+<template class="combobox">
+    <div class="power-app-form-field" power-app-type="combobox">
+        <span class="power-app-field-required">*</span>
+        <div class="power-app-field-value">
+            <div class="power-app-field-label">{{label}}</div>
+            <div class="power-app-field-input">
+                <div class="dropdown">
+                    <input type="text" id="{{id}}" placeholder="Enter {{label}}" required autocomplete="off">
+                    <div class="list">
+                        <div class="option" data-value="">None</div>
+                    </div>
+                </div>
+                <span class="power-app-icon-suffix arrowdown">
+                    <i class="ms-Icon ms-Icon--ChevronDown" aria-hidden="true"></i>
+                </span>
+            </div>
+        </div>
+    </div>
+</template>
+
+<template class="table">
+    <div class="power-app-control" power-app-type="table">
+        <label class="power-app-control-label">{{label}}</label>
+        <div class="power-app-control-table" id="{{}}">
+            <table>
+                <thead></thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+</template>
+
+<template class="label">
+    <div class="power-app-form-field" power-app-type="label">
+        <div class="power-app-field-label">{{label}}</div>
+    </div>
+</template>
+
+<template class="button">
+    <div class="power-app-control" power-app-type="button">
+        <button type="button" class="power-app-button">{{text}}</button>
+        <span class="power-app-icon-suffix">
+            <i></i>
+        </span>
+    </div>
+</template>
+
+<template class="image">
+    <div class="power-app-form-field" power-app-type="image">
+        <span class="power-app-field-required">*</span>
+        <div class="power-app-field-value">
+            <div class="power-app-field-input">
+                <img class="power-app-control-image" id="{{}}" src="" alt="{{label}}">
+            </div>
+        </div>
+        <template class="image-modal">
+            <div class="power-app-overlay">
+                <div class="power-app-menu">
+                    <h3>Update Image</h3>
+                    <div class="power-app-menu-body">
+                        <label>Image URL:</label>
+                        <input type="text" class="power-app-url" placeholder="Paste image link here...">
+                        <div class="power-app-divider">OR</div>
+                        <label>Upload Local File:</label>
+                        <input type="file" class="power-app-files" accept="image/*">
+                    </div>
+                    <div class="power-app-modal-actions">
+                        <button class="power-app-button-cancel">Cancel</button>
+                        <button class="power-app-button-save">Apply</button>
+                    </div>
+                </div>
+            </div>
+        </template>
+    </div>
+</template>
+
+<template class="gallery">
+    <div class="power-app-control" power-app-type="gallery">
+        <div class="power-app-gallery-header">
+            <div class="power-app-field-label">{{label}}</div>
+        </div>
+        <template class="gallery-item-template">
+            <div class="power-app-gallery-item">
+                <!-- gallery items layout -->
+            </div>
+        </template>
+        <div class="power-app-gallery-items">
+            <!-- gallery items -->
+        </div>
+    </div>
+</template>

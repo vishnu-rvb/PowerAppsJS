@@ -1,0 +1,11 @@
+:root {
+    --pa-bg: #f65810;
+}
+
+.power-app-field-input input {
+    border: 1px solid var(--pa-bg);
+}
+
+.power-app-field-input input[type="number"]{
+    -moz-appearance: textfield;
+}

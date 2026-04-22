@@ -1,0 +1,42 @@
+:root {
+    --pa-header-bg: #f65810;
+    --pa-header-font-color: white;
+}
+
+.power-app-header {
+    display: flex;
+    position: sticky;
+    align-items: center;
+    justify-content: space-between;
+    top: 0;
+    padding: 0 10px;
+    height: 65px;
+    background-color: var(--pa-header-bg);
+    color: var(--pa-header-font-color);
+    z-index: 1;
+}
+
+.power-app-header h1 {
+    margin: 0;
+    font-size: 1.6875rem;
+    font-weight: 500;
+}
+
+.power-app-header button {
+    width: 65px;
+    background: none;
+    border: none;
+    color: var(--pa-header-font-color);
+    cursor: pointer;
+}
+
+.power-app-header button i {
+    padding: 5px;
+    color: var(--pa-header-font-color);
+    font-size: 2.1875rem;
+}
+
+@media screen and (max-width: 600px) {
+    .power-app-header h1 { font-size: 1rem;}
+    .power-app-header button i { font-size: 1.3rem; }
+}

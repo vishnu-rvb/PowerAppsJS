@@ -1,0 +1,19 @@
+.power-app-field-input input[type="date"]{
+    padding-right: 0;
+    cursor: text;
+}
+
+.power-app-field-input input[type="date"]::-webkit-calendar-picker-indicator{
+    opacity: 0;
+    z-index: -1;
+}
+
+.power-app-icon-suffix.calendar {
+    z-index: 0;
+}
+
+.ms-Icon--Calendar::before {
+    content: "\E787";
+    font-family: "FabricMDL2Icons"; 
+    display: inline-block;
+}

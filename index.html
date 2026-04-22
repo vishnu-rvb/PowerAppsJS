@@ -7,8 +7,6 @@
     <link rel="icon" href="favicon.ico" sizes="any">
     <!-- override default date control theme-->
     <link type="text/css" rel="stylesheet" href="https://npmcdn.com/flatpickr/dist/themes/dark.css" themeOverride>
-    <!-- PowerApps JS -->
-    <link type="text/css" rel="stylesheet" href="src/PowerApps.css">
     <!-- Example -->
     <style>
         body {
@@ -57,7 +55,7 @@
     <p class="footer-text">PowerApps JS (v0)</p>
 
     <script type="module">
-        import { PowerApps } from "./src/PowerApps.js";
+        import { PowerApps } from "./src/core/PowerApps.js";
 
         document.addEventListener("DOMContentLoaded", async () => {
             const PA = new PowerApps();
@@ -71,13 +69,13 @@
                 location.reload();
             }
 
-            PA.add_control('header','header',{
+            await PA.add_control('header','header',{
                 title:'PowerApps JS Example',
-                reset: resetForm,
-                submit: submitForm
+                on_clear: resetForm,
+                on_submit: submitForm
             });
 
-            PA.add_control('#myForm','date',{
+            await PA.add_control('#myForm','date',{
                 label:'Date',
                 id:'date',
                 name:'date'
@@ -91,11 +89,12 @@
                 multiselect:true
             });
             
-            const lineField = PA.add_control('#myForm','combobox',{
+            const lineField = await PA.add_control('#myForm','combobox',{
                 label:'Line',
                 id:'line',
                 name:'line',
-                options:['Milling','Drilling','Lathe','Robo welder']
+                options:['Milling','Drilling','Lathe','Robo welder'],
+                multiselect:false
             });
             
             const partData = {
@@ -105,34 +104,35 @@
                 'Robo welder':['gasket','plate','chasis']
             };
 
-            const partField = PA.add_control('#myForm','combobox',{
+            const partField = await PA.add_control('#myForm','combobox',{
                 label:'Part',
                 id:'part',
                 name:'part'
             });
             
-            lineField.on_change( (line)=>{
+            lineField.on_change = (line)=>{
                 const newOptions = partData[line] || [];
                 partField.options = newOptions;
                 partField.value='';
-            });
+            };
 
-            PA.add_control('#myForm','number',{
+            await PA.add_control('#myForm','number',{
                 label:'Output',
                 id:'output',
                 name:'output',
                 required:false,
-                min:0
+                min:100,
+                max:0
             });
 
-            PA.add_control('#myForm','text',{
+            await PA.add_control('#myForm','text',{
                 label:'Remarks',
                 id:'remarks',
                 name:'remarks',
                 multiline:true
             });
 
-            const myTable = PA.add_control('#myForm', 'table', {
+            const myTable = await PA.add_control('#myForm', 'table', {
                 label: 'Inventory List',
                 id: 'inventory_list',
                 searching: true,
@@ -143,6 +143,28 @@
                         { ID: 2, Item: 'Lathe Bit', Stock: 8 },
                         { ID: 5, Item: 'Shaft', Stock: -5 }
                     ]
+            });
+
+            await PA.add_control('#myForm', 'label',{
+                value: 'label test'
+            });
+
+            await PA.add_control('#myForm', 'button',{
+                value: 'call us',
+                icon: 'ms-Icon--Phone',
+                on_select: ()=>{ alert('ms-Icon--Phone ok'); }
+            });
+            await PA.add_control('#myForm', 'button',{
+                value: 'maill us',
+                icon: 'ms-Icon--Mail',
+                on_select: ()=>{ alert('ms-Icon--Mail ok'); }
+            });
+
+            await PA.add_control('#myForm', 'image',{
+                label: 'logo',
+                id: 'logoID',
+                value: 'https://upload.wikimedia.org/wikipedia/commons/f/f9/Phoenicopterus_ruber_in_S%C3%A3o_Paulo_Zoo.jpg',
+                on_select: ()=>{ alert('logo pressed'); }
             });
         });
     </script>

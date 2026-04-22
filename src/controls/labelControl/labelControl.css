@@ -1,0 +1,9 @@
+.power-app-form-field[power-app-type="label"] {
+    margin-bottom: 5px;
+}
+
+.power-app-form-field[power-app-type="label"] .power-app-field-label {
+    background-color: transparent;
+    padding-left: 0;
+    font-weight: 600;
+}
