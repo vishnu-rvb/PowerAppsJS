@@ -8,12 +8,11 @@ const assets = [
 ];
 
 export class textControl extends PowerApps_Control {
+    static type = 'text'
+    static assets = assets;
     _init(data){
         if(data['multiline']!==undefined){this.multiline=data['multiline'];};
         super._init(data);
-    }
-    static async load(){
-        await PowerApps.loadAssets(assets);
     }
     get multiline(){
         const field=this.control.querySelector('.power-app-field-input');

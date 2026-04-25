@@ -1,0 +1,29 @@
+<template class="image">
+    <div class="power-app-form-field" power-app-type="image">
+        <span class="power-app-field-required">*</span>
+        <div class="power-app-field-value">
+            <div class="power-app-field-input">
+                <img class="power-app-control-image" id="{{}}" src="" alt="{{label}}">
+            </div>
+        </div>
+    </div>
+</template>
+
+<template class="imageModal">
+    <div class="power-app-overlay">
+        <div class="power-app-menu">
+            <h3>Update Image</h3>
+            <div class="power-app-menu-body">
+                <label>Image URL:</label>
+                <input type="text" class="power-app-url" placeholder="Paste image link here...">
+                <div class="power-app-divider">OR</div>
+                <label>Upload Local File:</label>
+                <input type="file" class="power-app-files" accept="image/*">
+            </div>
+            <div class="power-app-modal-actions">
+                <button class="power-app-button-cancel">Cancel</button>
+                <button class="power-app-button-save">Apply</button>
+            </div>
+        </div>
+    </div>
+</template>

@@ -8,6 +8,8 @@ const assets = [
 ];
 
 export class dropdownControl extends PowerApps_Control {
+    static type = 'dropdown'
+    static assets = assets;
     _init(data){
         super._init(data);
         this.listHTML=this.control.querySelector('.list');
@@ -36,9 +38,6 @@ export class dropdownControl extends PowerApps_Control {
             this.close();
         });
 
-    }
-    static async load(){
-        await PowerApps.loadAssets(assets);
     }
     get options(){
         if( this.listHTML ){ return this._optionsCache; };

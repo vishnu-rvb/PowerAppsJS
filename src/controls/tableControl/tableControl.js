@@ -21,10 +21,11 @@ const assets = [
     } }
 ];
 
-export class tableControl extends PowerApps_Control{ 
-    constructor(control, data){
-        super(control, {});
-        this.control = control;
+export class tableControl extends PowerApps_Control{
+    static type = 'table'
+    static assets = assets;
+    constructor(data){
+        super({});
         this.labelHTML = this.control.querySelector('.power-app-control-label');
         this.table = this.control.querySelector('table');
         if(data){this._init(data);};
@@ -46,9 +47,6 @@ export class tableControl extends PowerApps_Control{
                 paging: data['paging'] || false
             });
         }
-    }
-    static async load(){
-        await PowerApps.loadAssets(assets);
     }
     get label(){
         return this.labelHTML?.innerHTML;

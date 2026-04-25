@@ -8,14 +8,12 @@ const assets = [
 ];
 
 export class labelControl extends PowerApps_Control {
-    constructor(control, data){
-        super(control, {});
-        this.control = control;
+    static type = 'label'
+    static assets = assets;
+    constructor(data){
+        super({});
         this.labelHTML = this.control.querySelector('.power-app-field-label');
         if(data){ this._init(data); };
-    }
-    static async load() {
-        await PowerApps.loadAssets(assets);
     }
     get value() {
         return this.labelHTML?.innerHTML;

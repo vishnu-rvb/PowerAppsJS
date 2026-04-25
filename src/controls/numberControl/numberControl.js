@@ -8,13 +8,12 @@ const assets = [
 ];
 
 export class numberControl extends PowerApps_Control {
+    static type = 'number'
+    static assets = assets;
     _init(data){
         super._init(data);
         if(data['min']!==undefined){this.min=data['min'];};
         if(data['max']!==undefined){this.max=data['max'];};
-    }
-    static async load(){
-        await PowerApps.loadAssets(assets);
     }
     get min(){ 
         const val = this.input?.getAttribute('min');

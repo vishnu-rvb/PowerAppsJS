@@ -8,6 +8,8 @@ const assets = [
 ];
 
 export class headerControl extends PowerApps_Control {
+    static type = 'header'
+    static assets = assets;
     _init(data){
         super._init(data);
         this.titleHTML=this.control.querySelector('h1');
@@ -21,9 +23,6 @@ export class headerControl extends PowerApps_Control {
         if(data['title']!==undefined){ this.title=data['title']; };
         if(data['on_clear']!==undefined){ this.on_clear=data['on_clear']; };
         if(data['on_submit']!==undefined){ this.on_submit=data['on_submit']; };
-    }
-    static async load(){
-        await PowerApps.loadAssets(assets);
     }
     get title(){ return this.titleHTML? String(this.titleHTML.innerHTML):undefined; }
     set title(val){ if(this.titleHTML){this.titleHTML.innerHTML = String(val);}; }

@@ -1,0 +1,19 @@
+<template class="combobox">
+    <div class="power-app-form-field" power-app-type="combobox">
+        <span class="power-app-field-required">*</span>
+        <div class="power-app-field-value">
+            <div class="power-app-field-label">{{label}}</div>
+            <div class="power-app-field-input">
+                <div class="dropdown">
+                    <input type="text" id="{{id}}" placeholder="Enter {{label}}" required autocomplete="off">
+                    <div class="list">
+                        <div class="option" data-value="">None</div>
+                    </div>
+                </div>
+                <span class="power-app-icon-suffix arrowdown">
+                    <i class="ms-Icon ms-Icon--ChevronDown" aria-hidden="true"></i>
+                </span>
+            </div>
+        </div>
+    </div>
+</template>

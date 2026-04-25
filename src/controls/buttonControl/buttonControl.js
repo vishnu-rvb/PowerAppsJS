@@ -8,8 +8,10 @@ const assets = [
 ];
 
 export class buttonControl extends PowerApps_Control {
-    constructor(control, data) {
-        super(control, {});
+    static type = 'button'
+    static assets = assets;
+    constructor(data) {
+        super({});
         this.button = this.control.querySelector('button');
         this.iconHTML = this.control.querySelector('.power-app-icon-suffix');
         this.on_select = undefined;
@@ -25,9 +27,6 @@ export class buttonControl extends PowerApps_Control {
         if(data['value']!==undefined){ this.value = data['value']; };
         if(data['icon']!==undefined){ this.icon = data['icon']; };
         if(data['on_select']!==undefined){ this.on_select = data['on_select']; };
-    }
-    static async load() {
-        await PowerApps.loadAssets(assets);
     }
     get value() {
         return this.button?.innerHTML;

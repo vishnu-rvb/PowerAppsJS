@@ -6,28 +6,29 @@ const coreAssets = [
         href : new URL('./PowerApps.css', import.meta.url).href
     } }
 ];
-function defaultPath(name){
-    return `../controls/${name}Control/${name}Control.js`;
+function defaultPath(type,file='js'){
+    switch(type){
+        case 'imageModal': return defaultPath('image',file);
+        default: return `../controls/${type}Control/${type}Control.${file}`;
+    };
+    
 }
-const controlMap ={
-    text: defaultPath('text'),
-    number: defaultPath('number'),
-    date: defaultPath('date'),
-    dropdown: defaultPath('dropdown'),
-    combobox: defaultPath('combobox'),
-    header: defaultPath('header'),
-    table: defaultPath('table'),
-    image: defaultPath('image'),
-    label: defaultPath('label'),
-    button: defaultPath('button'),
-    gallery: defaultPath('gallery')
-};
+const controlList = [
+    'text','number','date',
+    'dropdown','combobox','header',
+    'table','image','imageModal','label','button',
+    'gallery'
+];
 
 export class PowerApps {
-    constructor() {
-        this.templates = undefined;
-        this.controlMap = controlMap;
-    }
+    static controlMap = Object.fromEntries(
+                controlList.map(i=>[i,
+                    {
+                        js:defaultPath(i,'js'),
+                        css:defaultPath(i,'css'),
+                        html:defaultPath(i,'html')
+                    }]
+                ));
     static async _until(condition){
         while(!condition()){
             await new Promise(resolve => requestAnimationFrame(resolve) );
@@ -67,49 +68,55 @@ export class PowerApps {
         return Promise.all(promises);
     }
     async init() {
-        try {
-            await PowerApps.loadAssets(coreAssets);
-            const response = await fetch(new URL('../templates/PowerApps.html', import.meta.url).href);
-            if (response.ok) {
-                const html = await response.text();
-                this.templates = new DOMParser().parseFromString(html, 'text/html');
-                console.log('PowerApps Engine running');
-                return this;
-            }
-            else{ throw new Error('No response for templates'); };
-        } 
-        catch (error) {
-            console.error('Failed to load Power Apps templates', error);
-        };
+        try { await PowerApps.loadAssets(coreAssets); }
+        catch(error) { console.error('Unable to load assets', error); };
     }
-    async add_control(selector, type, data = {}) {
-        if (!this.templates){
-            throw new Error(`PowerApps Engine not initialized`);
-        };
-        const path = new URL(this.controlMap[type], import.meta.url).href;
-        if(!path){
-            throw new Error(`Control type ${type} not found`);
-        };
+    static async _importTemplate(type){
+        try{
+            const path = new URL(defaultPath(type,'html'), import.meta.url).href;
+            const response = await fetch(path);
+            if(response.ok){
+                const html = await response.text();
+                const template = new DOMParser().parseFromString(html, 'text/html').querySelector('.'+String(type));
+                if(!template){ throw new Error(`Unable to select .${type}-control`); };
+                return template;
+            }
+            else{ throw new Error(`Unable to fetch ${type} template`); };
+        }
+        catch(error){ throw new Error(`Failed to import template ${error}`); };
+    }
+    static async _importControl(type){
+        const entry = PowerApps.controlMap[type];
+        if(!entry){ throw new Error(`Type ${type} not found`); };
+        const path = new URL(entry['js'], import.meta.url).href; 
         try{
             const module = await import(path);
-            const ControlClass = module[Object.keys(module)[0]];
-            if (ControlClass.load) { await ControlClass.load(); };
-            const template = this.templates.querySelector('.'+type);
-            if (!template) {
-                throw new Error(`Template .${type}-control not found`);
-            };
+            const moduleClass = module[ type?.concat('Control') || Object.keys(module)[0] ];
+            if(moduleClass.load){ await moduleClass.load(); };
+            return moduleClass;
+        }
+        catch(error){ throw new Error(`Failed to load module at ${path}:${error}`); };        
+    }
+    async add_control(selector, type, data = {}) {
+        try{
+            const ControlClass = await PowerApps._importControl(type);
             const targets = document.querySelectorAll(selector);
+
             let controls = [];
             for(const target of targets){
-                const control = document.importNode(template.content, true).firstElementChild;
-                target.appendChild(control);
-                const control_instance = new ControlClass(control, data);
+                const control_instance = new ControlClass(data);
                 controls.push(control_instance);
+                target.appendChild(control_instance.control);
             };
             return controls.length === 1 ? controls[0] : controls;
         }
-        catch(error){
-            console.error(`Failed to add ${type} control:`, error);
-        };
+        catch(error){ console.error(`Failed to add ${type} control:`, error); };
+    }
+    static async openModal(type){
+        const modalClass = await this._importControl(type);
+        const modal = new modalClass();
+        document.body.appendChild(modal.control);
+        try{ return await modal.open(); }
+        finally{ modal.control.remove(); };
     }
 }

@@ -1,6 +1,7 @@
 import { dropdownControl } from '../dropdownControl/dropdownControl.js';
 
 export class comboboxControl extends dropdownControl{
+    static type = 'combobox'
     _init(data){
         super._init(data);
         this._strict = false;

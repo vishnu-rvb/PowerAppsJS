@@ -8,20 +8,22 @@ const assets = [
 ];
 
 export class imageControl extends PowerApps_Control {
-    constructor(control, data) {
-        super(control, {});
+    static type = 'image'
+    static assets = assets;
+    static modalName = 'imageModal';
+    constructor(data) {
+        super({});
         this.input = this.control.querySelector('img');
-        this.input?.addEventListener('click', (event)=>{ this._selectCallback(event); });
-        const temp = this.control.querySelector('.image-modal');
-        this.modal = document.importNode(temp.content, true).firstElementChild;
+        this.edit = true;
+        this.input?.addEventListener('click',async (event)=>{
+            await this._selectCallback(event);
+        });
         if(data){this._init(data);};
     }
     _init(data) {
         super._init(data);
         if(data['on_select']!== undefined){ this.on_select = data['on_select']; };
-    }
-    static async load() {
-        await PowerApps.loadAssets(assets);
+        if(data['edit']!==undefined){ this.edit = data['edit']; };
     }
     get value() {
         return this.input?.src;
@@ -39,34 +41,48 @@ export class imageControl extends PowerApps_Control {
             this.input.alt = String(val);
         };
     }
-    _selectCallback(event){
-        if(this.input){
-            document.body.appendChild(this.modal);
-            const input_url = this.modal.querySelector('.power-app-url');
-            const input_files = this.modal.querySelector('.power-app-files');
-            const btn_save = this.modal.querySelector('.power-app-button-save');
-            const btn_cancel = this.modal.querySelector('.power-app-button-cancel');
-
-            input_files.addEventListener('change', (event) => {
-                const file = event.target.files[0];
-                if(file){
-                    input_url.value = URL.createObjectURL(file);
-                };
-            });
-
-            btn_save.addEventListener('click',()=>{
-                if (input_url.value){
-                    this.value = input_url.value;
-                };
-                this.modal.remove();
-            });
-            btn_cancel.addEventListener('click',()=>{
-                this.modal.remove();
-            });
-
-            if(typeof(this.on_select)==='function'){
-                this.on_select(event);
+    async _selectCallback(event){
+        if(!this.input){ return; }
+        try{
+            if(this.edit){
+                const newURL = await PowerApps.openModal(imageControl.modalName);
+                if(newURL){ this.value = newURL; };
+                if(newURL===''){ this.value = '' };
             };
+            if(typeof(this.on_select)==='function'){ this.on_select(event); };
+        }
+        catch(error){
+            console.error('No response from power apps engine',error);
         };
+    }
+}
+
+export class imageModalControl extends PowerApps_Control {
+    static type = 'imageModal'
+    static assets = assets;
+    constructor(){
+        super({});
+        this.input = this.control.querySelector('.power-app-url');
+        const input_file = this.control.querySelector('.power-app-files');
+
+        input_file?.addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            if(file){ this.input.value = URL.createObjectURL(file); };
+        });
+    }
+    async open(){      
+        return new Promise( (resolve,reject)=>{
+            const btn_save = this.control.querySelector('.power-app-button-save');
+            const btn_cancel  = this.control.querySelector('.power-app-button-cancel');
+            btn_save?.addEventListener('click',(event)=>{
+                resolve(this.input.value);
+            }, {once: true});
+            btn_cancel?.addEventListener('click',(event)=>{
+                resolve(undefined);
+            }, {once: true});
+            this.control?.addEventListener('click',(event)=>{
+                if(event.target === this.control ){ resolve(undefined); };
+            }, {once: true});
+        });
     }
 }

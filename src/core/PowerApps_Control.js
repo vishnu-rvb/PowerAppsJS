@@ -1,6 +1,13 @@
+import { PowerApps } from './PowerApps.js';
+
 export class PowerApps_Control{
-    constructor(control, data){
-        this.control = control;
+    static template = undefined;
+    static assets = undefined;
+    constructor(data){
+        if(!this.constructor.template){
+            throw new Error(`${this.constructor.name} template not loaded. Call load() first.`);
+        };
+        this.control = document.importNode(this.constructor.template.content, true).firstElementChild;
         this.input = this.control.querySelector('input');
         this.labelHTML = this.control.querySelector('.power-app-field-label');
         this.requiredHTML = this.control.querySelector('.power-app-field-required');
@@ -16,8 +23,12 @@ export class PowerApps_Control{
         if(data['required'] !== undefined){ this.required=data['required']; };
         if(data['on_change'] !== undefined){ this.on_change=data['on_change']; };
     }
-    static async load(){
-        return Promise.resolve();
+    static async load(loadAsset=true){
+        if(!this.template && this.type){
+            this.template = await PowerApps._importTemplate(this.type);
+            if(this.assets && loadAsset){ await PowerApps.loadAssets(this.assets); };
+        }
+        else{ return Promise.resolve(); };        
     }
     get label(){
         return this.labelHTML?.innerHTML;

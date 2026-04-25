@@ -1,7 +1,7 @@
 import { PowerApps_Control } from '../../core/PowerApps_Control.js';
 import { PowerApps } from '../../core/PowerApps.js';
 
-let assets = [
+const assets = [
     { id : 'flatpickrCSS', type : 'link', attribs : {
         href : 'https://npmcdn.com/flatpickr/dist/themes/material_orange.css'
     } },
@@ -14,8 +14,10 @@ let assets = [
 ];
 
 export class dateControl extends PowerApps_Control {
-    constructor(control, data) {
-        super(control, data);
+    static type = 'date'
+    static assets = assets;
+    constructor(data) {
+        super(data);
         // bind flatpickr
         this.picker = flatpickr(this.input, {
             dateFormat: "Y-m-d",
@@ -26,10 +28,10 @@ export class dateControl extends PowerApps_Control {
     static async load(){
         const themeOverride = document.querySelector('link[themeOverride]');
         if(themeOverride){
-            assets[0]['attribs']['href'] = themeOverride?.getAttribute('href');
+            this.assets[0]['attribs']['href'] = themeOverride?.getAttribute('href');
             themeOverride.disabled = true;
         };
-        await PowerApps.loadAssets(assets);
+        await super.load();
     }
     get value(){
         return super.value;
