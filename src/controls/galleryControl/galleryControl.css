@@ -26,15 +26,14 @@
     max-height: 500px;
 }
 
-.power-app-gallery-item {
-    flex: 1 1 100%;
-    border: 1px solid #ddd;
-    padding: 10px;
-    background: #fafafa;
-    transition: transform 0.1s;
+.power-app-gallery-row {
+    position: relative;
+    width: 100%;
+    min-height: 100px;
+    border: 1px solid var(--pa-label-bg);
 }
 
-.power-app-gallery-item:hover {
+.power-app-gallery-row:hover {
     border-color: var(--pa-gallery-border);
 }
 

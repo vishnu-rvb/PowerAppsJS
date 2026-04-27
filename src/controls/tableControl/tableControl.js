@@ -1,24 +1,27 @@
 import { PowerApps_Control } from '../../core/PowerApps_Control.js';
-import { PowerApps } from '../../core/PowerApps.js';
 
 const assets = [
-    { id : 'danfoJS', type : 'script', export : 'dfd', attribs : {
+    [
+        { id : 'danfoJS', type : 'script', export : 'dfd', attribs : {
         src : 'https://cdn.jsdelivr.net/npm/danfojs@1.2.0/lib/bundle.min.js'
-    } },
-    { id : 'jqueryJS', type : 'script', export : 'jQuery', attribs : {
-        integrity : 'sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=',
-        crossorigin : 'anonymous',
-        src : 'https://code.jquery.com/jquery-3.7.1.min.js'
-    } },
-    { id:'datatablesCSS', type : 'link', attribs : {
+        } },
+        { id : 'jqueryJS', type : 'script', export : 'jQuery', attribs : {
+            integrity : 'sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=',
+            crossorigin : 'anonymous',
+            src : 'https://code.jquery.com/jquery-3.7.1.min.js'
+        } }
+    ],
+    [
+        { id:'datatablesCSS', type : 'link', attribs : {
         href : 'https://cdn.datatables.net/2.3.7/css/dataTables.dataTables.css'
-    } },
-    { id:'datatablesJS', type : 'script', export : 'DataTable', attribs : {
-        src : 'https://cdn.datatables.net/2.3.7/js/dataTables.js'
-    } },
-    { id: 'tableControlCSS', type: 'link', attribs: {
-        href: new URL('./tableControl.css', import.meta.url).href
-    } }
+        } },
+        { id:'datatablesJS', type : 'script', export : 'DataTable', attribs : {
+            src : 'https://cdn.datatables.net/2.3.7/js/dataTables.js'
+        } },
+        { id: 'tableControlCSS', type: 'link', attribs: {
+            href: new URL('./tableControl.css', import.meta.url).href
+        } }
+    ]
 ];
 
 export class tableControl extends PowerApps_Control{
@@ -28,14 +31,15 @@ export class tableControl extends PowerApps_Control{
         super({});
         this.labelHTML = this.control.querySelector('.power-app-control-label');
         this.table = this.control.querySelector('table');
+        this.on_select=undefined;
         if(data){this._init(data);};
     }
     _init(data){
         super._init(data);
-        if( data['id'] ) { this.id = data['id']; };
-        if ( data['rows']  && data['columns'] ) {    
+        if(data['id']){ this.id = data['id']; };
+        if(data['on_select']){ this.on_select = data['on_select']; };
+        if (data['rows']  && data['columns'] ){    
             this._df = new dfd.DataFrame( data['rows'], { columns : data['columns'] });
-
             this.dataTable = new DataTable( this.table,{
                 columns : this._df.columns.map( i => { return { title: i }; }),
                 data : this._df.values,
@@ -46,7 +50,17 @@ export class tableControl extends PowerApps_Control{
                 responsive: data['responsive'] || false,
                 paging: data['paging'] || false
             });
-        }
+            this.table.querySelector('tbody')?.addEventListener('click', (event)=>{
+                const row = event.target.closest('tr');
+                if(row){
+                    const itemValues = this.dataTable.row(row).data();
+                    const item = Object.fromEntries(
+                        this._df.columns.map( (key,index)=>[ key,itemValues[index] ])
+                    );
+                    this._selectCallback(event,item)
+                };
+            });
+        };
     }
     get label(){
         return this.labelHTML?.innerHTML;
@@ -127,6 +141,9 @@ export class tableControl extends PowerApps_Control{
             this._df = new dfd.DataFrame( val['rows'], { columns : this.df.columns });
             this.dataTable?.clear().rows.add(this.df.values).draw();
         };
+    }
+    _selectCallback(event,item){
+        if (typeof(this.on_select) === 'function') { this.on_select(event,item); };
     }
     clear() {
         this.dataTable?.clear().draw();

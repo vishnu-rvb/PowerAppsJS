@@ -8,10 +8,11 @@ export class PowerApps_Control{
             throw new Error(`${this.constructor.name} template not loaded. Call load() first.`);
         };
         this.control = document.importNode(this.constructor.template.content, true).firstElementChild;
+        this.control._PowerApps_Control = this;
         this.input = this.control.querySelector('input');
         this.labelHTML = this.control.querySelector('.power-app-field-label');
         this.requiredHTML = this.control.querySelector('.power-app-field-required');
-        this.on_change=undefined;
+        this.on_change = undefined;
         this.input?.addEventListener('change', ()=>{ this._changeCallback(); });
         if(data){this._init(data);};
     }
@@ -22,6 +23,11 @@ export class PowerApps_Control{
         if(data['name']!==undefined){ this.name = data['name']; };
         if(data['required'] !== undefined){ this.required=data['required']; };
         if(data['on_change'] !== undefined){ this.on_change=data['on_change']; };
+        if(data['readOnly'] !== undefined){ this.readOnly=data['readOnly']; };
+        if (data['x'] !== undefined){ this.x = data.x; };
+        if (data['y'] !== undefined){ this.y = data.y; };
+        if (data['width'] !== undefined){ this.width = data.width; };
+        if (data['height'] !== undefined){ this.height = data.height; };
     }
     static async load(loadAsset=true){
         if(!this.template && this.type){
@@ -45,6 +51,9 @@ export class PowerApps_Control{
     get required(){
         return this.input?.required;
     }
+    get readOnly(){
+        return this.input?.readOnly;
+    }
     set label(val){ 
         if(this.labelHTML){ this.labelHTML.innerHTML = String(val); };
     }
@@ -63,6 +72,23 @@ export class PowerApps_Control{
     set required(val){
         if(this.input){ this.input.required = JSON.parse(val); };
         if(this.requiredHTML){ this.requiredHTML.innerHTML = JSON.parse(val) ? '*' : ''; };
+    }
+    set readOnly(val){
+        this.input.readOnly = JSON.parse(val) || false;
+    }
+    set x(val){ 
+        this.control.style.position = 'absolute';
+        this.control.style.left = (typeof(val)==='number')? String(val).concat('px'):val;
+    }
+    set y(val){ 
+        this.control.style.position = 'absolute';
+        this.control.style.top = (typeof(val)==='number')? String(val).concat('px'):val;
+    }
+    set width(val){
+        this.control.style.width = (typeof(val)==='number')? String(val).concat('px'):val;
+    }
+    set height(val){
+        this.control.style.height = (typeof(val)==='number')? String(val).concat('px'):val;
     }
     hide(val) {
         this.control.style.display = JSON.parse(val)? 'none':'';

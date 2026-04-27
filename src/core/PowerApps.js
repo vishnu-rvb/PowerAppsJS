@@ -17,7 +17,7 @@ const controlList = [
     'text','number','date',
     'dropdown','combobox','header',
     'table','image','imageModal','label','button',
-    'gallery'
+    'container','gallery'
 ];
 
 export class PowerApps {
@@ -35,38 +35,42 @@ export class PowerApps {
         };
     }
     static async loadAssets(assets){
-        const promises = Array.from(assets, i => {
-            if( document.querySelector(`#${i['id']}`) ) {
-                return Promise.resolve();
-            };
-            return new Promise( ( resolve, reject ) => {
-                const element=document.createElement( i['type'] );
-                for( const [ key, value ] of Object.entries( i['attribs'] ) ){
-                    element.setAttribute( key, value );
+        const stages = Array.isArray(assets[0])? assets : [assets];
+        for(const stage of stages){
+            const promises = Array.from(stage,i=>{
+                if( document.querySelector(`#${i['id']}`) ){
+                    return Promise.resolve();
                 };
-                element.id=i['id'];
-                if( i['type']==='link' ) {
-                    element.setAttribute( 'rel', 'stylesheet' );
-                    element.setAttribute( 'type', 'text/css' );
-                    document.head.appendChild(element);
-                    resolve(); 
-                }
-                else if( i['type']==='script' ){
-                    element.onerror= ()=>{ 
-                        reject(new Error('Failed to load script',i.id));
+                return new Promise( (resolve, reject)=>{
+                    const element=document.createElement(i['type']);
+                    element.id=i['id'];
+                    for( const [ key, value ] of Object.entries(i['attribs']) ){
+                        element.setAttribute( key, value );
                     };
-                    element.onload = async () => {
-                        if(i['export']){
-                            await PowerApps._until( () => window[i['export']] !== undefined );
-                        };
+                    if( i['type']==='link' ){
+                        element.setAttribute( 'rel', 'stylesheet');
+                        element.setAttribute( 'type', 'text/css');
+                        document.head.appendChild(element);
                         resolve();
+                    }
+                    else if( i['type']==='script' ){
+                        element.onload = async () => {
+                            if(i['export']){
+                                await PowerApps._until( () => window[i['export']] !== undefined );
+                            };
+                            resolve();
+                        };
+                        element.onerror= ()=>{ 
+                            reject(new Error('Failed to load script',i.id));
+                        };
+                        document.head.appendChild(element);
                     };
-                    document.head.appendChild(element);
-                };
+                });
             });
-        });
-        return Promise.all(promises);
+            await Promise.all(promises);
+        };
     }
+
     async init() {
         try { await PowerApps.loadAssets(coreAssets); }
         catch(error) { console.error('Unable to load assets', error); };
@@ -97,10 +101,22 @@ export class PowerApps {
         }
         catch(error){ throw new Error(`Failed to load module at ${path}:${error}`); };        
     }
-    async add_control(selector, type, data = {}) {
+    static async add_control(selector, type, data = {}) {
         try{
             const ControlClass = await PowerApps._importControl(type);
-            const targets = document.querySelectorAll(selector);
+            let targets;
+            if(typeof(selector) === 'string'){
+                targets = document.querySelectorAll(selector);
+            }
+            else if(selector instanceof(NodeList) || Array.isArray(selector)){
+                targets = selector;
+            }
+            else if(selector instanceof(HTMLElement)){
+                targets = [selector];
+            } 
+            else{
+                throw new Error("Invalid selector type");
+            };
 
             let controls = [];
             for(const target of targets){
@@ -111,6 +127,9 @@ export class PowerApps {
             return controls.length === 1 ? controls[0] : controls;
         }
         catch(error){ console.error(`Failed to add ${type} control:`, error); };
+    }
+    add_control(selector,type,data={}){
+        return this.constructor.add_control(selector,type,data);
     }
     static async openModal(type){
         const modalClass = await this._importControl(type);

@@ -1,5 +1,4 @@
 import { PowerApps_Control } from '../../core/PowerApps_Control.js';
-import { PowerApps } from '../../core/PowerApps.js';
 
 const assets = [
     { id: 'numberControlCSS', type: 'link', attribs: {

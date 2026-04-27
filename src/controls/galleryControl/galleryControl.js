@@ -1,70 +1,62 @@
-/*import { PowerApps_Control } from '../../core/PowerApps_Control.js';
 import { PowerApps } from '../../core/PowerApps.js';
+import { PowerApps_Control } from '../../core/PowerApps_Control.js';
+//import { containerControl } from '../containerControl/containerControl.js';
 
 const assets = [
-    { id: 'numberControlCSS', type: 'link', attribs: {
-        href: new URL('./numberControl.css', import.meta.url).href
+    { id: 'galleryControlCSS', type: 'link', attribs: {
+        href: new URL('./galleryControl.css', import.meta.url).href
     } }
 ];
 
-export class numberControl extends PowerApps_Control {
+export class galleryControl extends PowerApps_Control{
+    static type = 'gallery'
+    static assets = assets;
+    constructor(data){
+        super({});
+        this._template = undefined;
+        this._items = undefined;
+        this.itemsContainer = this.control.querySelector('.power-app-gallery-items');
+        if(data){this._init(data);};
+    }
     _init(data){
         super._init(data);
-        if(data['min']!==undefined){this.min=data['min'];};
-        if(data['max']!==undefined){this.max=data['max'];};
+        if(data['template']){ this.template = data['template']; };
+        if(data['items']){ this.items = data['items']; }; //[{label:values...}...]
     }
-    static async load(){
-        await PowerApps.loadAssets(assets);
+    get items(){
+        return this._items || [];
     }
-    get min(){ 
-        const val = this.input?.getAttribute('min');
-        return (val !== null && val !== '')? Number(val) : undefined; 
-    }
-    get max(){ 
-        const val = this.input?.getAttribute('max');
-        return (val !== null && val !== '')? Number(val) : undefined; 
-    }
-    get value(){
-        return super.value;
-    }
-    set min(val){ 
-        if(this.input){
-            if(this.input.max && Number(val)>Number(this.input.max)){
-                this.input.min=String(this.input.max)
-                this.input.max=String(val);
-            }
-            else{
-                this.input.min=String(val);
-            };
-        }
-    }
-    set max(val){
-        if(this.input){
-            if(this.input.min && Number(val)<Number(this.input.min)){
-                this.input.max=String(this.input.min);
-                this.input.min=String(val);
-            }
-            else{
-                this.input.max=String(val);
-            };
-        }
-    }
-    set value(val){ 
-        if( this.input && super.value!==val ){
-            super.value = this._clipValue(val);
+    get template(){
+        if(this._template) {
+            return this._template;
         };
     }
-    _clipValue(val){
-        if(val===''){ return ''; }
-        else{
-            let clip_val = Number(val);
-            if(typeof(this.min)==='number'){clip_val= Math.max(clip_val,this.min);};
-            if(typeof(this.max)==='number'){clip_val= Math.min(clip_val,this.max);};
-            return clip_val;
+    set template(val){
+        if( Array.isArray(val) && val.every(i=> (i['type'] && (i['data']['label'] || i['data']['value'])) ) ){
+            this._template = val;
         };
     }
-    _changeCallback() {
-        this.input.value = this._clipValue(super.value);
-        super._changeCallback();
+    set items(val){
+        if( Array.isArray(val) ){
+            this._items = val;
+            this._render();
+        };
     }
-}*/
+    async _render(){
+        this.itemsContainer.innerHTML = '';
+        for(const i in this._items){
+            const row = document.createElement('div');
+            const item = this._items[i];
+            row.className = 'power-app-gallery-row';
+            row.setAttribute("row-index", i);
+            row.style.position = 'relative'; 
+            this.itemsContainer.appendChild(row);
+            for(const key of this._template){
+                const control = await PowerApps.add_control(row,key['type'],key['data']);
+                if(item[key['data']['value']] || item[key['data']['label']]){
+                    control.value = item[key['data']['value']] || item[key['data']['label']]
+                };
+            };
+        };
+    }
+}
